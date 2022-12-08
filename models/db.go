@@ -12,8 +12,12 @@ import (
 
 var DB *gorm.DB
 
+type Tabler interface {
+	TableName() string
+}
+
 func InitDB() {
-	log.Info("Setting up connection to UDB")
+	log.Info("Setting up connection to DB")
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jerusalem",
 		viper.GetString("db.host"),
 		viper.GetString("db.user"),
@@ -26,7 +30,7 @@ func InitDB() {
 		Logger: gorm_logrus.New().LogMode(logger.Info),
 	})
 	if err != nil {
-		log.Infof("UDB connection error: %s", err)
+		log.Infof("DB connection error: %s", err)
 		return
 	}
 	DB.AutoMigrate()

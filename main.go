@@ -1,6 +1,6 @@
 package main
 
-import "github.com/Bnei-Baruch/udb/cmd"
+import "github.com/Bnei-Baruch/wf-api/cmd"
 
 func main() {
 	cmd.Exec()

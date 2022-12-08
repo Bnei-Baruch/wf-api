@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Bnei-Baruch/udb/models"
 	"github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Roles struct {
@@ -38,6 +38,14 @@ type IDTokenClaims struct {
 	SessionState      string           `json:"session_state"`
 	Sub               string           `json:"sub"`
 	Typ               string           `json:"typ"`
+}
+
+type User struct {
+	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
+	Name      string    `boil:"name" json:"name,omitempty" toml:"name" yaml:"name,omitempty"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	AccountID string    `boil:"account_id" json:"account_id" toml:"account_id" yaml:"account_id"`
 }
 
 func AuthenticationMiddleware() gin.HandlerFunc {
@@ -78,8 +86,8 @@ func AuthenticationMiddleware() gin.HandlerFunc {
 	}
 }
 
-func getUser(claims *IDTokenClaims) (*models.User, error) {
-	user := &models.User{
+func getUser(claims *IDTokenClaims) (*User, error) {
+	user := &User{
 		AccountID: claims.Sub,
 		Email:     claims.Email,
 		Name:      fmt.Sprintf("%s %s", claims.GivenName, claims.FamilyName),

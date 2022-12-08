@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/Bnei-Baruch/udb/models"
+	"github.com/Bnei-Baruch/wf-api/models"
 	"strings"
 
 	"github.com/spf13/viper"

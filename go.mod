@@ -1,9 +1,8 @@
-module github.com/Bnei-Baruch/udb
+module github.com/Bnei-Baruch/wf-api
 
 go 1.19
 
 require (
-	github.com/Bnei-Baruch/wfdb v0.0.0-20220818101556-480b84abf5a6
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/eclipse/paho.golang v0.10.0
 	github.com/gin-contrib/cors v1.4.0

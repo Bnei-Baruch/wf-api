@@ -1,13 +1,13 @@
 package models
 
-import (
-	"time"
-)
+import "github.com/jackc/pgtype"
 
 type User struct {
-	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
-	Name      string    `boil:"name" json:"name,omitempty" toml:"name" yaml:"name,omitempty"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	AccountID string    `boil:"account_id" json:"account_id" toml:"account_id" yaml:"account_id"`
+	ID        int          `json:"id" gorm:"autoIncrement"`
+	UserID    string       `json:"user_id" gorm:"primaryKey"`
+	FirstName string       `json:"firstName"`
+	LastName  string       `json:"lastName"`
+	Email     string       `json:"email"`
+	Props     pgtype.JSONB `json:"properties" gorm:"type:jsonb"`
+	Role      string       `json:"role"`
 }

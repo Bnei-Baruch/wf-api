@@ -8,15 +8,15 @@ func (Trimmer) TableName() string {
 }
 
 type Trimmer struct {
-	ID        int             `gorm:"autoIncrement" json:"id"`
-	TrimID    string          `gorm:"primaryKey" json:"trim_id"`
+	ID        int             `json:"id" gorm:"autoIncrement"`
+	TrimID    string          `json:"trim_id" gorm:"primaryKey"`
 	Date      string          `json:"date"`
 	FileName  string          `json:"file_name"`
-	Inpoints  pq.Float32Array `gorm:"type:numeric" json:"inpoints"`
-	Outpoints pq.Float32Array `gorm:"type:numeric" json:"outpoints"`
+	Inpoints  pq.Float32Array `json:"inpoints" gorm:"type:numeric"`
+	Outpoints pq.Float32Array `json:"outpoints" gorm:"type:numeric"`
 	Parent    pgtype.JSONB    `json:"parent"`
-	Line      pgtype.JSONB    `gorm:"type:jsonb" json:"line"`
-	Original  pgtype.JSONB    `gorm:"type:jsonb" json:"original"`
-	Proxy     pgtype.JSONB    `gorm:"type:jsonb" json:"proxy"`
-	Wfstatus  pgtype.JSONB    `gorm:"type:jsonb" json:"wfstatus"`
+	Line      pgtype.JSONB    `json:"line" gorm:"type:jsonb"`
+	Original  pgtype.JSONB    `json:"original" gorm:"type:jsonb"`
+	Proxy     pgtype.JSONB    `json:"proxy" gorm:"type:jsonb"`
+	Wfstatus  pgtype.JSONB    `json:"wfstatus" gorm:"type:jsonb"`
 }

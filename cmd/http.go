@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"context"
-	"github.com/Bnei-Baruch/udb/api"
-	"github.com/Bnei-Baruch/udb/models"
-	"github.com/Bnei-Baruch/udb/utils"
-	"github.com/Bnei-Baruch/udb/version"
+	"github.com/Bnei-Baruch/wf-api/api"
+	"github.com/Bnei-Baruch/wf-api/models"
+	"github.com/Bnei-Baruch/wf-api/utils"
+	"github.com/Bnei-Baruch/wf-api/version"
 	"github.com/spf13/viper"
 	"net/http"
 
@@ -17,7 +17,7 @@ import (
 
 func InitHTTP() {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
-	log.Infof("Starting UDB API server version %s", version.Version)
+	log.Infof("Starting WF API server version %s", version.Version)
 
 	// cors
 	corsConfig := cors.DefaultConfig()
