@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 )
 
@@ -34,4 +35,44 @@ func InitDB() {
 		return
 	}
 	DB.AutoMigrate()
+}
+
+func CreateRecord(s interface{}) error {
+	r := DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(&s)
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
+}
+
+func UpdateState(idKey string, idVal string, key string, val string, table string) error {
+	r := DB.Exec("UPDATE $5 SET wfstatus = wfstatus || json_build_object($3::text, $4::bool)::jsonb WHERE $1=$2", idKey, idVal, key, val, table)
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
+}
+
+func RemoveRecord(idKey string, idVal string, s interface{}) error {
+	r := DB.Unscoped().Where(idKey+" = ?", idVal).Delete(&s)
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
+}
+
+func FindByKV(key string, val string, s interface{}) (interface{}, error) {
+	err := DB.Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+func FindByID(key string, id string, s interface{}) (interface{}, error) {
+	err := DB.Where(key+" = ?", id).Find(&s).Error
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }

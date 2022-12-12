@@ -4,7 +4,6 @@ import (
 	"github.com/Bnei-Baruch/wf-api/models"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	"gorm.io/gorm/clause"
 	"net/http"
 	"strconv"
 )
@@ -13,7 +12,7 @@ func CreateUser(c *gin.Context) {
 	var u models.User
 	if c.BindJSON(&u) == nil {
 		models.DB.Create(&u)
-		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
 
@@ -40,34 +39,91 @@ func GetUser(c *gin.Context) {
 	}
 }
 
-func GetIngest(c *gin.Context) {
-	id := c.Params.ByName("id")
-	var ingest models.Ingest
-	if err := models.DB.Where("capture_id = ?", id).First(&ingest).Error; err != nil {
+// Ingest
+
+func GetIngestByKV(c *gin.Context) {
+	key := c.Query("key")
+	val := c.Query("value")
+	var t []models.Ingest
+	if r, err := models.FindByKV(key, val, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, ingest)
+		c.JSON(http.StatusOK, r)
 	}
 }
 
-func FindTrimmer(c *gin.Context) {
+func GetIngestByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := "capture_id"
+	var t models.Ingest
+	if r, err := models.FindByID(key, id, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func PutIngest(c *gin.Context) {
+	var t models.Ingest
+
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+
+	err = models.CreateRecord(t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func UpdateIngestState(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	val := c.Query("value")
+	err := models.UpdateState("capture_id", id, key, val, "ingest")
+
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func RemoveIngest(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var t models.Ingest
+	err := models.RemoveRecord("capture_id", id, t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+// Trimmer
+
+func GetTrimmerByKV(c *gin.Context) {
 	key := c.Query("key")
 	val := c.Query("value")
 	var t []models.Trimmer
-	if err := models.DB.Where(key+" LIKE ?", "%"+val+"%").Find(&t).Error; err != nil {
+	if r, err := models.FindByKV(key, val, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, t)
+		c.JSON(http.StatusOK, r)
 	}
 }
 
-func GetTrimmer(c *gin.Context) {
+func GetTrimmerByID(c *gin.Context) {
 	id := c.Params.ByName("id")
+	key := "trim_id"
 	var t models.Trimmer
-	if err := models.DB.Where("trim_id = ?", id).First(&t).Error; err != nil {
+	if r, err := models.FindByID(key, id, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, t)
+		c.JSON(http.StatusOK, r)
 	}
 }
 
@@ -82,28 +138,40 @@ func GetTrimmed(c *gin.Context) {
 
 func PutTrimmer(c *gin.Context) {
 	var t models.Trimmer
-	if c.BindJSON(&t) == nil {
-		models.DB.Clauses(clause.OnConflict{
-			UpdateAll: true,
-		}).Create(&t)
-		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+
+	err = models.CreateRecord(t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
 
-func TrimmerStatusValue(c *gin.Context) {
+func UpdateTrimmerState(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := c.Params.ByName("key")
 	val := c.Query("value")
-	models.DB.Exec("UPDATE trimmer SET wfstatus = wfstatus || json_build_object($2::text, $3::bool)::jsonb WHERE trim_id=$1", id, key, val)
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	err := models.UpdateState("trim_id", id, key, val, "trimmer")
+
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
 }
 
 func RemoveTrimmer(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var t models.Trimmer
-	if err := models.DB.Unscoped().Where("trim_id = ?", id).Delete(&t).Error; err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+	err := models.RemoveRecord("trim_id", id, t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
 	} else {
-		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
