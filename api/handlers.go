@@ -45,7 +45,7 @@ func GetIngestByKV(c *gin.Context) {
 	key := c.Query("key")
 	val := c.Query("value")
 	var t []models.Ingest
-	if r, err := models.FindByKV(key, val, t); err != nil {
+	if r, err := models.FindByKV(key, val, &t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -56,7 +56,7 @@ func GetIngestByID(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := "capture_id"
 	var t models.Ingest
-	if r, err := models.FindByID(key, id, t); err != nil {
+	if r, err := models.FindByID(key, id, &t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -95,7 +95,7 @@ func UpdateIngestState(c *gin.Context) {
 func RemoveIngest(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var t models.Ingest
-	err := models.RemoveRecord("capture_id", id, t)
+	err := models.RemoveRecord("capture_id", id, &t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -109,7 +109,7 @@ func GetTrimmerByKV(c *gin.Context) {
 	key := c.Query("key")
 	val := c.Query("value")
 	var t []models.Trimmer
-	if r, err := models.FindByKV(key, val, t); err != nil {
+	if r, err := models.FindByKV(key, val, &t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -120,7 +120,7 @@ func GetTrimmerByID(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := "trim_id"
 	var t models.Trimmer
-	if r, err := models.FindByID(key, id, t); err != nil {
+	if r, err := models.FindByID(key, id, &t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)

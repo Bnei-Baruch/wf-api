@@ -46,7 +46,7 @@ func CreateRecord(s interface{}) error {
 }
 
 func UpdateState(idKey string, idVal string, key string, val string, table string) error {
-	r := DB.Exec("UPDATE $5 SET wfstatus = wfstatus || json_build_object($3::text, $4::bool)::jsonb WHERE $1=$2", idKey, idVal, key, val, table)
+	r := DB.Exec("UPDATE "+table+" SET wfstatus = wfstatus || json_build_object(?::text, ?::bool)::jsonb WHERE ?=?", key, val, idKey, idVal)
 	if r.Error != nil {
 		return r.Error
 	}
@@ -70,9 +70,9 @@ func FindByKV(key string, val string, s interface{}) (interface{}, error) {
 }
 
 func FindByID(key string, id string, s interface{}) (interface{}, error) {
-	err := DB.Where(key+" = ?", id).Find(&s).Error
-	if err != nil {
-		return nil, err
+	r := DB.Where(key+" = ?", id).First(&s)
+	if r.Error != nil {
+		return s, r.Error
 	}
 	return s, nil
 }
