@@ -19,4 +19,9 @@ func SetupRoutes(router *gin.Engine) {
 	router.POST("/trimmer/:id/wfstatus/:key", UpdateTrimmerState)
 	router.DELETE("/trimmer/:id", RemoveTrimmer)
 	router.GET("/trim", GetTrimmed)
+
+	router.GET("/kmedia/find", GetKmediaByKV)
+	router.GET("/kmedia/:id", GetKmediaByID)
+	router.PUT("/kmedia/:id", PutKmedia)
+	router.DELETE("/kmedia/:id", RemoveKmedia)
 }

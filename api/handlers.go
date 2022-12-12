@@ -169,3 +169,52 @@ func GetTrimmed(c *gin.Context) {
 		c.JSON(http.StatusOK, t)
 	}
 }
+
+// Kmedia
+
+func GetKmediaByKV(c *gin.Context) {
+	key := c.Query("key")
+	val := c.Query("value")
+	var t []models.Kmedia
+	if r, err := models.FindByKV(key, val, &t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func GetKmediaByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := "kmedia_id"
+	var t models.Kmedia
+	if r, err := models.FindByID(key, id, &t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func PutKmedia(c *gin.Context) {
+	var t models.Kmedia
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.CreateRecord(&t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func RemoveKmedia(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var t models.Kmedia
+	err := models.RemoveRecord("kmedia_id", id, &t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
