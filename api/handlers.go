@@ -65,13 +65,11 @@ func GetIngestByID(c *gin.Context) {
 
 func PutIngest(c *gin.Context) {
 	var t models.Ingest
-
 	err := c.BindJSON(&t)
 	if err != nil {
 		NewBadRequestError(err).Abort(c)
 	}
-
-	err = models.CreateRecord(t)
+	err = models.CreateRecord(&t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -84,7 +82,6 @@ func UpdateIngestState(c *gin.Context) {
 	key := c.Params.ByName("key")
 	val := c.Query("value")
 	err := models.UpdateState("capture_id", id, key, val, "ingest")
-
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -127,23 +124,12 @@ func GetTrimmerByID(c *gin.Context) {
 	}
 }
 
-func GetTrimmed(c *gin.Context) {
-	var t []models.Trimmer
-	if err := models.DB.Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error; err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-	} else {
-		c.JSON(http.StatusOK, t)
-	}
-}
-
 func PutTrimmer(c *gin.Context) {
 	var t models.Trimmer
-
 	err := c.BindJSON(&t)
 	if err != nil {
 		NewBadRequestError(err).Abort(c)
 	}
-
 	err = models.CreateRecord(&t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
@@ -157,7 +143,6 @@ func UpdateTrimmerState(c *gin.Context) {
 	key := c.Params.ByName("key")
 	val := c.Query("value")
 	err := models.UpdateState("trim_id", id, key, val, "trimmer")
-
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -168,10 +153,19 @@ func UpdateTrimmerState(c *gin.Context) {
 func RemoveTrimmer(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var t models.Trimmer
-	err := models.RemoveRecord("trim_id", id, t)
+	err := models.RemoveRecord("trim_id", id, &t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func GetTrimmed(c *gin.Context) {
+	var t []models.Trimmer
+	if err := models.DB.Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error; err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, t)
 	}
 }
