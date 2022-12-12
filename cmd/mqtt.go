@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Bnei-Baruch/wf-api/models"
 	"github.com/eclipse/paho.golang/autopaho"
 	"github.com/eclipse/paho.golang/paho"
 	log "github.com/sirupsen/logrus"
@@ -156,7 +157,28 @@ func SendRespond(id string, m *MqttPayload) {
 func SendMessage(id string) {
 	var topic string
 	var m interface{}
-	//date := time.Now().Format("2006-01-02")
+	date := time.Now().Format("2006-01-02")
+
+	switch id {
+	case "ingest":
+		topic = viper.GetString("mqtt.monitor_ingest_topic")
+		m, _ = models.FindByKV("date", date, &[]models.Ingest{})
+	case "trimmer":
+		topic = viper.GetString("mqtt.monitor_trimmer_topic")
+		m, _ = models.FindByKV("date", date, &[]models.Trimmer{})
+	case "archive":
+		topic = viper.GetString("mqtt.monitor_archive_topic")
+	case "trim":
+		topic = viper.GetString("mqtt.state_trimmer_topic")
+	case "drim":
+		topic = viper.GetString("mqtt.state_dgima_topic")
+	case "bdika":
+		topic = viper.GetString("mqtt.state_aricha_topic")
+	case "jobs":
+		topic = viper.GetString("mqtt.state_jobs_topic")
+	case "langcheck":
+		topic = viper.GetString("mqtt.state_langcheck_topic")
+	}
 
 	//if id == "ingest" {
 	//	topic = common.MonitorIngestTopic
