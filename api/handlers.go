@@ -144,7 +144,7 @@ func PutTrimmer(c *gin.Context) {
 		NewBadRequestError(err).Abort(c)
 	}
 
-	err = models.CreateRecord(t)
+	err = models.CreateRecord(&t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {

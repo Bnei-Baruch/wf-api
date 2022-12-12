@@ -38,15 +38,15 @@ func InitDB() {
 }
 
 func CreateRecord(s interface{}) error {
-	r := DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(&s)
+	r := DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(s)
 	if r.Error != nil {
 		return r.Error
 	}
 	return nil
 }
 
-func UpdateState(idKey string, idVal string, key string, val string, table string) error {
-	r := DB.Exec("UPDATE "+table+" SET wfstatus = wfstatus || json_build_object(?::text, ?::bool)::jsonb WHERE ?=?", key, val, idKey, idVal)
+func UpdateState(idKey string, idVal string, key string, val, table string) error {
+	r := DB.Exec("UPDATE "+table+" SET wfstatus = wfstatus || json_build_object($1::text, $2::bool)::jsonb WHERE "+idKey+"=$3", key, val, idVal)
 	if r.Error != nil {
 		return r.Error
 	}
