@@ -24,4 +24,6 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/kmedia/:id", GetKmediaByID)
 	router.PUT("/kmedia/:id", PutKmedia)
 	router.DELETE("/kmedia/:id", RemoveKmedia)
+
+	router.GET("/products/find", GetProductsByDF)
 }

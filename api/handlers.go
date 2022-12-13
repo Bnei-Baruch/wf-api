@@ -45,7 +45,7 @@ func GetIngestByKV(c *gin.Context) {
 	key := c.Query("key")
 	val := c.Query("value")
 	var t []models.Ingest
-	if r, err := models.FindByKV(key, val, &t); err != nil {
+	if r, err := models.FindByKV(key, val, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -106,7 +106,7 @@ func GetTrimmerByKV(c *gin.Context) {
 	key := c.Query("key")
 	val := c.Query("value")
 	var t []models.Trimmer
-	if r, err := models.FindByKV(key, val, &t); err != nil {
+	if r, err := models.FindByKV(key, val, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -176,7 +176,7 @@ func GetKmediaByKV(c *gin.Context) {
 	key := c.Query("key")
 	val := c.Query("value")
 	var t []models.Kmedia
-	if r, err := models.FindByKV(key, val, &t); err != nil {
+	if r, err := models.FindByKV(key, val, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -216,5 +216,17 @@ func RemoveKmedia(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+// Products
+
+func GetProductsByDF(c *gin.Context) {
+	values := c.Request.URL.Query()
+	var t []models.Product
+	if r, err := models.FindByDF(values, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
 	}
 }
