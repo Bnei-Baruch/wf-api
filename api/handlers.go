@@ -150,6 +150,7 @@ func PutTrimmer(c *gin.Context) {
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
+		go SendMessage("trim")
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
@@ -166,6 +167,7 @@ func PostTrimmerJSON(c *gin.Context) {
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
+		go SendMessage("trim")
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
@@ -178,6 +180,7 @@ func UpdateTrimmerState(c *gin.Context) {
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
+		go SendMessage("trim")
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
@@ -189,6 +192,7 @@ func RemoveTrimmer(c *gin.Context) {
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
+		go SendMessage("trim")
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }

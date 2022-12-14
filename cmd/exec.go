@@ -24,6 +24,5 @@ func Exec() {
 	}
 
 	models.InitDB()
-	InitMQTT()
-	InitHTTP()
+	Init()
 }

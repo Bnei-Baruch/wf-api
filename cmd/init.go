@@ -15,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func InitHTTP() {
+func Init() {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	log.Infof("Starting WF API server version %s", version.Version)
 
@@ -40,7 +40,12 @@ func InitHTTP() {
 		})
 	}
 
-	// Setup gin
+	// Setup mqtt
+	if err := api.InitMQTT(); err != nil {
+		log.Infof("MQTT Init error: %s", err)
+	}
+
+	// Setup http
 	gin.SetMode(viper.GetString("server.mode"))
 	router := gin.New()
 	router.Use(

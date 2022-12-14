@@ -1,4 +1,4 @@
-package cmd
+package api
 
 import (
 	"context"
@@ -27,7 +27,7 @@ type MqttPayload struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-func InitMQTT() {
+func InitMQTT() error {
 	log.Info("MQTT: Init")
 
 	serverURL, err := url.Parse(viper.GetString("mqtt.url"))
@@ -82,9 +82,12 @@ func InitMQTT() {
 	MQTT, err = autopaho.NewConnection(context.Background(), cliCfg)
 	if err != nil {
 		log.Errorf("MQTT: Fail to connect: %s", err)
+		return err
 	}
 
 	cliCfg.Router.RegisterHandler(viper.GetString("mqtt.topic"), execMessage)
+
+	return nil
 }
 
 func execMessage(m *paho.Publish) {
