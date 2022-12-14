@@ -77,11 +77,27 @@ func PutIngest(c *gin.Context) {
 	}
 }
 
+func PostIngestJSON(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	var t map[string]interface{}
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.UpdateRecord("capture_id", id, key, t, "ingest")
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
 func UpdateIngestState(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := c.Params.ByName("key")
 	val := c.Query("value")
-	err := models.UpdateState("capture_id", id, key, val, "ingest")
+	err := models.UpdateJSONB("capture_id", id, key, val, "ingest", "wfstatus")
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -138,11 +154,27 @@ func PutTrimmer(c *gin.Context) {
 	}
 }
 
+func PostTrimmerJSON(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	var t map[string]interface{}
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.UpdateRecord("trim_id", id, key, t, "trimmer")
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
 func UpdateTrimmerState(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := c.Params.ByName("key")
 	val := c.Query("value")
-	err := models.UpdateState("trim_id", id, key, val, "trimmer")
+	err := models.UpdateJSONB("trim_id", id, key, val, "trimmer", "wfstatus")
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {

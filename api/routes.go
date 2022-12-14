@@ -11,12 +11,14 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/ingest/:id", GetIngestByID)
 	router.PUT("/ingest/:id", PutIngest)
 	router.POST("/ingest/:id/wfstatus/:key", UpdateIngestState)
+	router.POST("/ingest/:id/:key", PostIngestJSON)
 	router.DELETE("/ingest/:id", RemoveIngest)
 
 	router.GET("/trimmer/find", GetTrimmerByKV)
 	router.GET("/trimmer/:id", GetTrimmerByID)
 	router.PUT("/trimmer/:id", PutTrimmer)
 	router.POST("/trimmer/:id/wfstatus/:key", UpdateTrimmerState)
+	router.POST("/trimmer/:id/:key", PostTrimmerJSON)
 	router.DELETE("/trimmer/:id", RemoveTrimmer)
 	router.GET("/trim", GetTrimmed)
 

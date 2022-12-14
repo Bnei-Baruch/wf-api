@@ -53,6 +53,40 @@ func UpdateState(idKey string, idVal string, key string, val, table string) erro
 	return nil
 }
 
+func UpdateRecord(idKey string, idVal string, colKey string, colVal interface{}, table string) error {
+	sqlCmd := "UPDATE "+table+" SET "+colKey+" = $2 WHERE " + idKey + "=$1"
+	r := DB.Exec(sqlCmd, idVal, colVal)
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
+}
+
+func UpdateJSONB(idKey string, idVal string, propKey string, propVal interface{}, table string, prop string) error {
+	var sqlCmd string
+	var varType string
+	if _, ok := propVal.(string); ok {
+		if propVal == "true" || propVal == "false" {
+			varType = "bool"
+		} else {
+			varType = "text"
+		}
+	} else {
+		varType = "jsonb"
+	}
+
+	// TODO: Add other types
+
+	sqlCmd = "UPDATE "+table+" SET "+prop+" = "+prop+" || json_build_object($3::text, $2::"+varType+")::jsonb WHERE " + idKey + "=$3"
+
+	r := DB.Exec(sqlCmd, propKey, propVal, idVal)
+
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
+}
+
 func RemoveRecord(idKey string, idVal string, s interface{}) error {
 	r := DB.Unscoped().Where(idKey+" = ?", idVal).Delete(&s)
 	if r.Error != nil {
