@@ -195,10 +195,10 @@ func RemoveTrimmer(c *gin.Context) {
 
 func GetTrimmed(c *gin.Context) {
 	var t []models.Trimmer
-	if err := models.DB.Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error; err != nil {
+	if r, err := models.FindTrimmed(t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, t)
+		c.JSON(http.StatusOK, r)
 	}
 }
 

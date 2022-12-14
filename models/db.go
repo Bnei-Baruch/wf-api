@@ -45,16 +45,8 @@ func CreateRecord(s interface{}) error {
 	return nil
 }
 
-func UpdateState(idKey string, idVal string, key string, val, table string) error {
-	r := DB.Exec("UPDATE "+table+" SET wfstatus = wfstatus || json_build_object($1::text, $2::bool)::jsonb WHERE "+idKey+"=$3", key, val, idVal)
-	if r.Error != nil {
-		return r.Error
-	}
-	return nil
-}
-
 func UpdateRecord(idKey string, idVal string, colKey string, colVal interface{}, table string) error {
-	sqlCmd := "UPDATE "+table+" SET "+colKey+" = $2 WHERE " + idKey + "=$1"
+	sqlCmd := "UPDATE " + table + " SET " + colKey + " = $2 WHERE " + idKey + "=$1"
 	r := DB.Exec(sqlCmd, idVal, colVal)
 	if r.Error != nil {
 		return r.Error
@@ -77,7 +69,7 @@ func UpdateJSONB(idKey string, idVal string, propKey string, propVal interface{}
 
 	// TODO: Add other types
 
-	sqlCmd = "UPDATE "+table+" SET "+prop+" = "+prop+" || json_build_object($3::text, $2::"+varType+")::jsonb WHERE " + idKey + "=$3"
+	sqlCmd = "UPDATE " + table + " SET " + prop + " = " + prop + " || json_build_object($1::text, $2::" + varType + ")::jsonb WHERE " + idKey + "=$3"
 
 	r := DB.Exec(sqlCmd, propKey, propVal, idVal)
 
