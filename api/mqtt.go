@@ -91,7 +91,7 @@ func InitMQTT() error {
 }
 
 func execMessage(m *paho.Publish) {
-	log.Debugf("MQTT: Received message: %s from topic: %s\n", string(m.Payload), m.Topic)
+	//log.Debugf("MQTT: Received message: %s from topic: %s\n", string(m.Payload), m.Topic)
 	id := "false"
 	s := strings.Split(m.Topic, "/")
 	p := string(m.Payload)

@@ -17,6 +17,7 @@ import (
 
 func Init() {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+	log.SetLevel(log.DebugLevel)
 	log.Infof("Starting WF API server version %s", version.Version)
 
 	// cors

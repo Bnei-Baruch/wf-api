@@ -88,7 +88,7 @@ func RemoveRecord(idKey string, idVal string, s interface{}) error {
 }
 
 func FindByKV(key string, val string, s interface{}) (interface{}, error) {
-	err := DB.Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
+	err := DB.Debug().Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
 	if err != nil {
 		return nil, err
 	}

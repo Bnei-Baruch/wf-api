@@ -3,39 +3,115 @@ package api
 import (
 	"github.com/Bnei-Baruch/wf-api/models"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
 	"net/http"
-	"strconv"
 )
 
-func CreateUser(c *gin.Context) {
-	var u models.User
-	if c.BindJSON(&u) == nil {
-		models.DB.Create(&u)
+var list = map[string]interface{}{
+	"ingest":   []models.Ingest{},
+	"trimmer":  []models.Trimmer{},
+	"products": []models.Product{},
+	"state":    []models.State{},
+	"kmedia":   []models.Kmedia{},
+}
+
+var recd = map[string]interface{}{
+	"ingest":   &models.Ingest{},
+	"trimmer":  &models.Trimmer{},
+	"products": &models.Product{},
+	"state":    &models.State{},
+	"kmedia":   &models.Kmedia{},
+}
+
+var ids = map[string]string{
+	"ingest":   "capture_id",
+	"trimmer":  "trim_id",
+	"products": "product_id",
+	"state":    "state_id",
+	"kmedia":   "kmedia_id",
+}
+
+func GetRecordsByKV(c *gin.Context) {
+	root := c.Params.ByName("root")
+	key := c.Query("key")
+	val := c.Query("value")
+	t := list[root]
+	if r, err := models.FindByKV(key, val, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func GetRecordByID(c *gin.Context) {
+	root := c.Params.ByName("root")
+	idVal := c.Params.ByName("id")
+	idKey := ids[root]
+	t := recd[root]
+	if r, err := models.FindByID(idKey, idVal, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func PutRecord(c *gin.Context) {
+	root := c.Params.ByName("root")
+	t := recd[root]
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.CreateRecord(&t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
 
-func GetUsers(c *gin.Context) {
-	var u []models.User
-	if err := models.DB.Find(&u).Error; err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+func PostRecordJSON(c *gin.Context) {
+	root := c.Params.ByName("root")
+	idKey := ids[root]
+	idVal := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	var t map[string]interface{}
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.UpdateRecord(idKey, idVal, key, t, root)
+	if err != nil {
+		NewInternalError(err).Abort(c)
 	} else {
-		c.JSON(http.StatusOK, u)
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
 
-func GetUser(c *gin.Context) {
-	id, e := strconv.ParseInt(c.Param("id"), 10, 0)
-	if e != nil {
-		NewBadRequestError(errors.Wrap(e, "id expects int64")).Abort(c)
-		return
-	}
-	var u models.User
-	if err := models.DB.Where("id = ?", id).First(&u).Error; err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+func UpdateRecordState(c *gin.Context) {
+	root := c.Params.ByName("root")
+	idKey := ids[root]
+	idVal := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	st := c.Params.ByName("st")
+	val := c.Query("value")
+	err := models.UpdateJSONB(idKey, idVal, key, val, root, st)
+	if err != nil {
+		NewInternalError(err).Abort(c)
 	} else {
-		c.JSON(http.StatusOK, u)
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func RemoveRecord(c *gin.Context) {
+	root := c.Params.ByName("root")
+	idKey := ids[root]
+	idVal := c.Params.ByName("id")
+	t := recd[root]
+	err := models.RemoveRecord(idKey, idVal, &t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
 
@@ -96,8 +172,9 @@ func PostIngestJSON(c *gin.Context) {
 func UpdateIngestState(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := c.Params.ByName("key")
+	st := c.Params.ByName("st")
 	val := c.Query("value")
-	err := models.UpdateJSONB("capture_id", id, key, val, "ingest", "wfstatus")
+	err := models.UpdateJSONB("capture_id", id, key, val, "ingest", st)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -175,8 +252,9 @@ func PostTrimmerJSON(c *gin.Context) {
 func UpdateTrimmerState(c *gin.Context) {
 	id := c.Params.ByName("id")
 	key := c.Params.ByName("key")
+	st := c.Params.ByName("st")
 	val := c.Query("value")
-	err := models.UpdateJSONB("trim_id", id, key, val, "trimmer", "wfstatus")
+	err := models.UpdateJSONB("trim_id", id, key, val, "trimmer", st)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -264,5 +342,71 @@ func GetProductsByDF(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
+	}
+}
+
+func GetProductByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := "product_id"
+	var t models.Product
+	if r, err := models.FindByID(key, id, &t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func PutProduct(c *gin.Context) {
+	var t models.Product
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.CreateRecord(&t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func UpdateProductState(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	st := c.Params.ByName("st")
+	val := c.Query("value")
+	err := models.UpdateJSONB("product_id", id, key, val, "products", st)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func PostProductJSON(c *gin.Context) {
+	id := c.Params.ByName("id")
+	key := c.Params.ByName("key")
+	var t map[string]interface{}
+	err := c.BindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	err = models.UpdateRecord("product_id", id, key, t, "products")
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+func RemoveProduct(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var t models.Product
+	err := models.RemoveRecord("product_id", id, &t)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		go SendMessage("trim")
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
 	}
 }
