@@ -12,6 +12,19 @@ var list = map[string]interface{}{
 	"products": []models.Product{},
 	"state":    []models.State{},
 	"kmedia":   []models.Kmedia{},
+	"archive":  []models.Archive{},
+	"capture":  []models.Capture{},
+	"convert":  []models.Convert{},
+	"carbon":   []models.Carbon{},
+	"insert":   []models.Insert{},
+	"source":   []models.Source{},
+	"dgima":    []models.Dgima{},
+	"aricha":   []models.Aricha{},
+	"jobs":     []models.Job{},
+	"files":    []models.File{},
+	"cloud":    []models.Clouds{},
+	"users":    []models.User{},
+	"label":    []models.Label{},
 }
 
 var recd = map[string]interface{}{
@@ -20,6 +33,19 @@ var recd = map[string]interface{}{
 	"products": &models.Product{},
 	"state":    &models.State{},
 	"kmedia":   &models.Kmedia{},
+	"archive":  &models.Archive{},
+	"capture":  &models.Capture{},
+	"convert":  &models.Convert{},
+	"carbon":   &models.Carbon{},
+	"insert":   &models.Insert{},
+	"source":   &models.Source{},
+	"dgima":    &models.Dgima{},
+	"aricha":   &models.Aricha{},
+	"jobs":     &models.Job{},
+	"files":    &models.File{},
+	"cloud":    &models.Clouds{},
+	"users":    &models.User{},
+	"label":    &models.Label{},
 }
 
 var ids = map[string]string{
@@ -28,6 +54,19 @@ var ids = map[string]string{
 	"products": "product_id",
 	"state":    "state_id",
 	"kmedia":   "kmedia_id",
+	"archive":  "archive_id",
+	"capture":  "capture_id",
+	"convert":  "convert_id",
+	"carbon":   "carbon_id",
+	"insert":   "insert_id",
+	"source":   "source_id",
+	"dgima":    "dgima_id",
+	"aricha":   "aricha_id",
+	"jobs":     "job_id",
+	"files":    "file_id",
+	"cloud":    "cloud_id",
+	"users":    "user_id",
+	"label":    "id",
 }
 
 func GetRecordsByKV(c *gin.Context) {
