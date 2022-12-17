@@ -69,17 +69,33 @@ func PutRecord(c *gin.Context) {
 	}
 }
 
-func PostRecordJSON(c *gin.Context) {
+func UpdateRecord(c *gin.Context) {
 	root := c.Params.ByName("root")
 	idKey := ids[root]
 	idVal := c.Params.ByName("id")
 	key := c.Params.ByName("key")
+
+	// JSONB we take from body and simple value from option
+	val := c.Query("value")
+	var err error
 	var t map[string]interface{}
-	err := c.BindJSON(&t)
-	if err != nil {
+	err = c.BindJSON(&t)
+
+	if val == "" && err != nil {
 		NewBadRequestError(err).Abort(c)
+		return
 	}
-	err = models.UpdateRecord(idKey, idVal, key, t, root)
+
+	// Ignore value option if body exist
+	if err == nil {
+		val = ""
+		err = models.UpdateRecord(idKey, idVal, key, t, root)
+	}
+
+	if val != "" {
+		err = models.UpdateRecord(idKey, idVal, key, val, root)
+	}
+
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -87,14 +103,34 @@ func PostRecordJSON(c *gin.Context) {
 	}
 }
 
-func UpdateRecordState(c *gin.Context) {
+func UpdateJsonbRecord(c *gin.Context) {
 	root := c.Params.ByName("root")
 	idKey := ids[root]
 	idVal := c.Params.ByName("id")
 	key := c.Params.ByName("key")
-	st := c.Params.ByName("st")
+	prop := c.Params.ByName("prop")
+
+	// JSONB we take from body and simple value from option
 	val := c.Query("value")
-	err := models.UpdateJSONB(idKey, idVal, key, val, root, st)
+	var err error
+	var t map[string]interface{}
+	err = c.BindJSON(&t)
+
+	if val == "" && err != nil {
+		NewBadRequestError(err).Abort(c)
+		return
+	}
+
+	// Ignore value option if body exist
+	if err == nil {
+		val = ""
+		err = models.UpdateJSONB(idKey, idVal, key, t, root, prop)
+	}
+
+	if val != "" {
+		err = models.UpdateJSONB(idKey, idVal, key, val, root, prop)
+	}
+
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {

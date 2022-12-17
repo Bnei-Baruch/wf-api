@@ -54,6 +54,30 @@ func UpdateRecord(idKey string, idVal string, colKey string, colVal interface{},
 	return nil
 }
 
+func RemoveRecord(idKey string, idVal string, s interface{}) error {
+	r := DB.Unscoped().Where(idKey+" = ?", idVal).Delete(&s)
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
+}
+
+func FindByKV(key string, val string, s interface{}) (interface{}, error) {
+	err := DB.Debug().Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+func FindByID(key string, id string, s interface{}) (interface{}, error) {
+	r := DB.Where(key+" = ?", id).First(&s)
+	if r.Error != nil {
+		return s, r.Error
+	}
+	return s, nil
+}
+
 func UpdateJSONB(idKey string, idVal string, propKey string, propVal interface{}, table string, prop string) error {
 	var sqlCmd string
 	var varType string
@@ -77,28 +101,4 @@ func UpdateJSONB(idKey string, idVal string, propKey string, propVal interface{}
 		return r.Error
 	}
 	return nil
-}
-
-func RemoveRecord(idKey string, idVal string, s interface{}) error {
-	r := DB.Unscoped().Where(idKey+" = ?", idVal).Delete(&s)
-	if r.Error != nil {
-		return r.Error
-	}
-	return nil
-}
-
-func FindByKV(key string, val string, s interface{}) (interface{}, error) {
-	err := DB.Debug().Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-func FindByID(key string, id string, s interface{}) (interface{}, error) {
-	r := DB.Where(key+" = ?", id).First(&s)
-	if r.Error != nil {
-		return s, r.Error
-	}
-	return s, nil
 }

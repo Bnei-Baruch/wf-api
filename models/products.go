@@ -49,7 +49,7 @@ func FindByDF(values url.Values, t interface{}) (interface{}, error) {
 		sqlStatement = sqlStatement + ` AND ` + strings.Join(where, " AND ")
 	}
 
-	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY product_id DESC LIMIT %s OFFSET %s`, limit, offset)
+	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY id DESC LIMIT %s OFFSET %s`, limit, offset)
 
 	r := DB.Raw(sqlStatement).Scan(&t)
 
