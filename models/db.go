@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -85,6 +86,7 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 	sqlStatement := "SELECT * FROM " + table
 	limit := "100"
 	offset := "0"
+	i := 0
 
 	for k, v := range values {
 		if k == "limit" {
@@ -95,7 +97,17 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 			offset = v[0]
 			continue
 		}
-		where = append(where, fmt.Sprintf(`"%s" = '%s'`, k, v[0]))
+		//if k == "sha1" {
+		//	where = append(where, fmt.Sprintf(`original['format']['sha1'] = '"%s"'`, v[0]))
+		//	continue
+		//}
+		if i == 0 {
+			sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`"%s" = '%s'`, k, v[0])
+		} else {
+			where = append(where, fmt.Sprintf(`"%s" = '%s'`, k, v[0]))
+		}
+
+		i += 1
 	}
 
 	if len(where) > 0 {
@@ -115,9 +127,11 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 
 func FindByJSON(table string, prop string, values url.Values, t interface{}) (interface{}, error) {
 	var where []string
+	var q string
 	sqlStatement := "SELECT * FROM " + table
-	limit := "100"
+	limit := "10"
 	offset := "0"
+	i := 0
 
 	for k, v := range values {
 		if k == "limit" {
@@ -128,11 +142,21 @@ func FindByJSON(table string, prop string, values url.Values, t interface{}) (in
 			offset = v[0]
 			continue
 		}
-		if k == "sha1" {
-			where = append(where, fmt.Sprintf(`original['format']['sha1'] = '"%s"'`, v[0]))
-			continue
+		if _, err := strconv.ParseBool(v[0]); err == nil {
+			q = fmt.Sprintf(`%s['%s'] = '%s'`, prop, k, v[0])
+		} else {
+			q = fmt.Sprintf(`%s['%s'] = '"%s"'`, prop, k, v[0])
 		}
-		where = append(where, fmt.Sprintf(`%s['%s'] = '"%s"'`, prop, k, v[0]))
+
+		// TODO: check parse int
+
+		if i == 0 {
+			sqlStatement = sqlStatement + ` WHERE ` + q
+		} else {
+			where = append(where, q)
+		}
+
+		i += 1
 	}
 
 	if len(where) > 0 {

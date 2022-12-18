@@ -96,7 +96,7 @@ func GetRecordsByJSON(c *gin.Context) {
 	root := c.Params.ByName("root")
 	prop := c.Params.ByName("prop")
 	values := c.Request.URL.Query()
-	t := recd[root]
+	t := list[root]
 	if r, err := models.FindByJSON(root, prop, values, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {

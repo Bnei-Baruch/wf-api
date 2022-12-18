@@ -165,13 +165,13 @@ func SendMessage(id string) {
 	switch id {
 	case "ingest":
 		topic = viper.GetString("mqtt.monitor_ingest_topic")
-		m, _ = models.FindByKV("date", date, []models.Ingest{})
+		m, _ = models.V1FindByKV("date", date, []models.Ingest{})
 	case "trimmer":
 		topic = viper.GetString("mqtt.monitor_trimmer_topic")
-		m, _ = models.FindByKV("date", date, []models.Trimmer{})
+		m, _ = models.V1FindByKV("date", date, []models.Trimmer{})
 	case "archive":
 		topic = viper.GetString("mqtt.monitor_archive_topic")
-		m, _ = models.FindByKV("date", date, []models.Kmedia{})
+		m, _ = models.V1FindByKV("date", date, []models.Kmedia{})
 	case "trim":
 		topic = viper.GetString("mqtt.state_trimmer_topic")
 		m, _ = models.FindTrimmed([]models.Trimmer{})
