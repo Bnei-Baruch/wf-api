@@ -22,7 +22,7 @@ var list = map[string]interface{}{
 	"aricha":   []models.Aricha{},
 	"jobs":     []models.Job{},
 	"files":    []models.File{},
-	"cloud":    []models.Clouds{},
+	"cloud":    []models.Cloud{},
 	"users":    []models.User{},
 	"label":    []models.Label{},
 }
@@ -43,7 +43,7 @@ var recd = map[string]interface{}{
 	"aricha":   &models.Aricha{},
 	"jobs":     &models.Job{},
 	"files":    &models.File{},
-	"cloud":    &models.Clouds{},
+	"cloud":    &models.Cloud{},
 	"users":    &models.User{},
 	"label":    &models.Label{},
 }
@@ -69,12 +69,23 @@ var ids = map[string]string{
 	"label":    "id",
 }
 
-func GetRecordsByKV(c *gin.Context) {
+func V1GetRecordsByKV(c *gin.Context) {
 	root := c.Params.ByName("root")
 	key := c.Query("key")
 	val := c.Query("value")
 	t := list[root]
-	if r, err := models.FindByKV(key, val, t); err != nil {
+	if r, err := models.V1FindByKV(key, val, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func V2GetRecordsByKV(c *gin.Context) {
+	root := c.Params.ByName("root")
+	values := c.Request.URL.Query()
+	t := list[root]
+	if r, err := models.V2FindByKV(root, values, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)

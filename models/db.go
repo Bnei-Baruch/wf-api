@@ -9,6 +9,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
+	"net/url"
+	"strings"
 )
 
 var DB *gorm.DB
@@ -62,7 +64,15 @@ func RemoveRecord(idKey string, idVal string, s interface{}) error {
 	return nil
 }
 
-func FindByKV(key string, val string, s interface{}) (interface{}, error) {
+func FindByID(key string, id string, s interface{}) (interface{}, error) {
+	r := DB.Where(key+" = ?", id).First(&s)
+	if r.Error != nil {
+		return s, r.Error
+	}
+	return s, nil
+}
+
+func V1FindByKV(key string, val string, s interface{}) (interface{}, error) {
 	err := DB.Debug().Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
 	if err != nil {
 		return nil, err
@@ -70,12 +80,42 @@ func FindByKV(key string, val string, s interface{}) (interface{}, error) {
 	return s, nil
 }
 
-func FindByID(key string, id string, s interface{}) (interface{}, error) {
-	r := DB.Where(key+" = ?", id).First(&s)
-	if r.Error != nil {
-		return s, r.Error
+func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, error) {
+	var where []string
+	sqlStatement := "SELECT * FROM " + table
+	limit := "1000"
+	offset := "0"
+
+	for k, v := range values {
+		if k == "limit" {
+			limit = v[0]
+			continue
+		}
+		if k == "offset" {
+			offset = v[0]
+			continue
+		}
+		where = append(where, fmt.Sprintf(`"%s" = '%s'`, k, v[0]))
 	}
-	return s, nil
+
+	if len(where) > 0 {
+		sqlStatement = sqlStatement + ` AND ` + strings.Join(where, " AND ")
+	}
+
+	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY id DESC LIMIT %s OFFSET %s`, limit, offset)
+
+	r := DB.Raw(sqlStatement).Scan(&t)
+
+	if r.Error != nil {
+		return nil, r.Error
+	}
+
+	return t, nil
+}
+
+func FindByJSON(prop string, stKey string, stVal string, t interface{}) (interface{}, error) {
+	err := DB.Where(prop+" ->> '"+stKey+"' = ?", stVal).Find(&t).Error
+	return t, err
 }
 
 func UpdateJSONB(idKey string, idVal string, propKey string, propVal interface{}, table string, prop string) error {
