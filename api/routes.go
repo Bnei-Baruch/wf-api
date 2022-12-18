@@ -5,6 +5,7 @@ import "github.com/gin-gonic/gin"
 func SetupRoutes(router *gin.Engine) {
 	router.GET("/:root/find", V1GetRecordsByKV)
 	router.GET("/:root/kv", V2GetRecordsByKV)
+	router.GET("/:root/js/:prop", GetRecordsByJSON)
 	router.GET("/:root/:id", GetRecordByID)
 	router.PUT("/:root/:id", PutRecord)
 	router.DELETE("/:root/:id", RemoveRecord)

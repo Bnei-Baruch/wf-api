@@ -92,6 +92,18 @@ func V2GetRecordsByKV(c *gin.Context) {
 	}
 }
 
+func GetRecordsByJSON(c *gin.Context) {
+	root := c.Params.ByName("root")
+	prop := c.Params.ByName("prop")
+	values := c.Request.URL.Query()
+	t := recd[root]
+	if r, err := models.FindByJSON(root, prop, values, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 func GetRecordByID(c *gin.Context) {
 	root := c.Params.ByName("root")
 	idVal := c.Params.ByName("id")
