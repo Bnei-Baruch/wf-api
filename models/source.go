@@ -2,6 +2,10 @@ package models
 
 import "github.com/jackc/pgtype"
 
+func (Source) TableName() string {
+	return "source"
+}
+
 type Source struct {
 	ID       int          `json:"id" gorm:"autoIncrement"`
 	SourceID string       `json:"source_id" gorm:"primaryKey"`

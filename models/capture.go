@@ -2,6 +2,10 @@ package models
 
 import "github.com/jackc/pgtype"
 
+func (Capture) TableName() string {
+	return "capture"
+}
+
 type Capture struct {
 	ID        int          `json:"id" gorm:"autoIncrement"`
 	CaptureID string       `json:"capture_id" gorm:"primaryKey"`

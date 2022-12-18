@@ -2,6 +2,10 @@ package models
 
 import "github.com/jackc/pgtype"
 
+func (Insert) TableName() string {
+	return "insert"
+}
+
 type Insert struct {
 	ID         int          `json:"id" gorm:"autoIncrement"`
 	InsertID   string       `json:"insert_id" gorm:"primaryKey"`

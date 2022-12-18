@@ -2,7 +2,11 @@ package models
 
 import "github.com/jackc/pgtype"
 
-type Clouds struct {
+func (Cloud) TableName() string {
+	return "cloud"
+}
+
+type Cloud struct {
 	ID         int          `json:"id" gorm:"autoIncrement"`
 	OID        string       `json:"oid" gorm:"primaryKey"`
 	Date       string       `json:"date"`

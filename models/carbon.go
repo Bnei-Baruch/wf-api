@@ -1,5 +1,9 @@
 package models
 
+func (Carbon) TableName() string {
+	return "carbon"
+}
+
 type Carbon struct {
 	ID        int     `json:"id" gorm:"autoIncrement"`
 	CarbonID  string  `json:"carbon_id" gorm:"primaryKey"`

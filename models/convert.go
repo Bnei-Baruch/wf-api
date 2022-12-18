@@ -2,6 +2,10 @@ package models
 
 import "github.com/jackc/pgtype"
 
+func (Convert) TableName() string {
+	return "convert"
+}
+
 type Convert struct {
 	ID        int          `json:"id" gorm:"autoIncrement"`
 	ConvertID string       `json:"convert_id" gorm:"primaryKey"`
