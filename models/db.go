@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -87,6 +88,7 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 	limit := "100"
 	offset := "0"
 	i := 0
+	chk, _ := regexp.MatchString(`^(trimmer|aricha|dgima|ingest|capture)$`, table)
 
 	for k, v := range values {
 		if k == "limit" {
@@ -97,10 +99,12 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 			offset = v[0]
 			continue
 		}
-		//if k == "sha1" {
-		//	where = append(where, fmt.Sprintf(`original['format']['sha1'] = '"%s"'`, v[0]))
-		//	continue
-		//}
+		// FIXME: we need to move json to first tree level, write now sha option must first in chk root
+		if chk && k == "sha1" && i == 0 {
+			sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`original['format']['sha1'] = '"%s"'`, v[0])
+			i += 1
+			continue
+		}
 		if i == 0 {
 			sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`"%s" = '%s'`, k, v[0])
 		} else {
@@ -129,7 +133,7 @@ func FindByJSON(table string, prop string, values url.Values, t interface{}) (in
 	var where []string
 	var q string
 	sqlStatement := "SELECT * FROM " + table
-	limit := "10"
+	limit := "100"
 	offset := "0"
 	i := 0
 
