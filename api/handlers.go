@@ -223,3 +223,35 @@ func GetTrimmed(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
+
+// State
+
+func GetStateByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	if r, err := models.GetState(id); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func GetStateByProp(c *gin.Context) {
+	id := c.Params.ByName("id")
+	prop := c.Params.ByName("prop")
+	if r, err := models.GetStateProp(id, prop); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func RemoveStateProp(c *gin.Context) {
+	id := c.Params.ByName("id")
+	prop := c.Params.ByName("prop")
+	err := models.RemoveStateProp(id, prop)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
