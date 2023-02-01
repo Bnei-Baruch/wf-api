@@ -22,3 +22,8 @@ type Dgima struct {
 	Proxy     pgtype.JSONB    `json:"proxy" gorm:"type:jsonb"`
 	Wfstatus  pgtype.JSONB    `json:"wfstatus" gorm:"type:jsonb"`
 }
+
+func FindDgima(t interface{}) (interface{}, error) {
+	err := DB.Where("wfstatus ->> 'removed' = ?", "parent ->> 'source' != ?", "false", "cassette").Find(&t).Error
+	return t, err
+}

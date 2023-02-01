@@ -177,56 +177,17 @@ func SendMessage(id string) {
 		m, _ = models.FindTrimmed([]models.Trimmer{})
 	case "drim":
 		topic = viper.GetString("mqtt.state_dgima_topic")
+		m, _ = models.FindTrimmed([]models.Dgima{})
 	case "bdika":
 		topic = viper.GetString("mqtt.state_aricha_topic")
+		m, _ = models.FindAricha([]models.Aricha{})
 	case "jobs":
 		topic = viper.GetString("mqtt.state_jobs_topic")
+		m, _ = models.FindJobs([]models.Job{})
 	case "langcheck":
 		topic = viper.GetString("mqtt.state_langcheck_topic")
+		m, _ = models.GetState("langcheck")
 	}
-
-	//if id == "ingest" {
-	//	topic = common.MonitorIngestTopic
-	//	m, _ = models.FindIngest(DB, "date", date)
-	//}
-	//
-	//if id == "trimmer" {
-	//	topic = common.MonitorTrimmerTopic
-	//	m, _ = models.FindTrimmer(a.DB, "date", date)
-	//}
-	//
-	//if id == "archive" {
-	//	topic = common.MonitorArchiveTopic
-	//	m, _ = models.FindKmFiles(a.DB, "date", date)
-	//}
-	//
-	//if id == "trim" {
-	//	topic = common.StateTrimmerTopic
-	//	m, _ = models.GetFilesToTrim(a.DB)
-	//}
-	//
-	//if id == "drim" {
-	//	topic = common.StateDgimaTopic
-	//	m, _ = models.GetFilesToDgima(a.DB)
-	//}
-	//
-	//if id == "bdika" {
-	//	topic = common.StateArichaTopic
-	//	m, _ = models.GetBdika(a.DB)
-	//}
-	//
-	//if id == "jobs" {
-	//	topic = common.StateJobsTopic
-	//	m, _ = models.GetActiveJobs(a.DB)
-	//}
-	//
-	//if id == "langcheck" {
-	//	topic = common.StateLangcheckTopic
-	//	var s models.State
-	//	s.StateID = "langcheck"
-	//	_ = s.GetState(a.DB)
-	//	m = s.Data
-	//}
 
 	message, err := json.Marshal(m)
 	if err != nil {

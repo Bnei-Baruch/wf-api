@@ -17,10 +17,11 @@ func SetupRoutes(router *gin.Engine) {
 	router.POST("/:root/:id/:key/:prop", UpdateJsonbRecord)
 
 	router.GET("/trim", GetTrimmed)
+	router.GET("/jobs", GetJobs)
+	router.GET("/drim", GetDgima)
+	router.GET("/bdika", GetAricha)
 	// TODO
-	//router.GET("/drim", )
 	//router.GET("/drim/:id", )
-	//router.GET("/bdika", )
 	//router.GET("/jobs_list", )
 	//router.GET("/cassette", )
 	//router.GET("/states", )

@@ -19,3 +19,8 @@ type Aricha struct {
 	Proxy    pgtype.JSONB `json:"proxy" gorm:"type:jsonb"`
 	Wfstatus pgtype.JSONB `json:"wfstatus" gorm:"type:jsonb"`
 }
+
+func FindAricha(t interface{}) (interface{}, error) {
+	err := DB.Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error
+	return t, err
+}

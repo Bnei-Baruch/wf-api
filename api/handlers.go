@@ -128,6 +128,7 @@ func PutRecord(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+		go SendMessage(root)
 	}
 }
 
@@ -162,6 +163,7 @@ func UpdateRecord(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+		go SendMessage(root)
 	}
 }
 
@@ -197,6 +199,7 @@ func UpdateJsonbRecord(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+		go SendMessage(root)
 	}
 }
 
@@ -210,6 +213,7 @@ func RemoveRecord(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+		go SendMessage(root)
 	}
 }
 
@@ -218,6 +222,39 @@ func RemoveRecord(c *gin.Context) {
 func GetTrimmed(c *gin.Context) {
 	var t []models.Trimmer
 	if r, err := models.FindTrimmed(t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// Jobs
+
+func GetJobs(c *gin.Context) {
+	var t []models.Job
+	if r, err := models.FindJobs(t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// Dgima
+
+func GetDgima(c *gin.Context) {
+	var t []models.Dgima
+	if r, err := models.FindDgima(t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// Aricha
+
+func GetAricha(c *gin.Context) {
+	var t []models.Dgima
+	if r, err := models.FindAricha(t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -253,5 +290,6 @@ func RemoveStateProp(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
+		go SendMessage("langcheck")
 	}
 }

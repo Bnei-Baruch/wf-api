@@ -18,3 +18,8 @@ type Job struct {
 	Product  pgtype.JSONB `json:"product" gorm:"type:jsonb"`
 	Wfstatus pgtype.JSONB `json:"wfstatus" gorm:"type:jsonb"`
 }
+
+func FindJobs(t interface{}) (interface{}, error) {
+	err := DB.Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error
+	return t, err
+}
