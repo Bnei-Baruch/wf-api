@@ -99,17 +99,27 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 			offset = v[0]
 			continue
 		}
+
 		// FIXME: It's files endpoint compb
 		if k == "archive" || k == "mdb" {
-			where = append(where, fmt.Sprintf(`properties['%s'] = '%s'`, k, v[0]))
-			continue
+			if i == 0 {
+				sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`properties['%s'] = '%s'`, k, v[0])
+				i += 1
+				continue
+			} else {
+				where = append(where, fmt.Sprintf(`properties['%s'] = '%s'`, k, v[0]))
+				i += 1
+				continue
+			}
 		}
+
 		// FIXME: we need to move json to first tree level, write now sha option must first in chk root
 		if chk && k == "sha1" && i == 0 {
 			sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`original['format']['sha1'] = '"%s"'`, v[0])
 			i += 1
 			continue
 		}
+
 		if i == 0 {
 			sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`"%s" = '%s'`, k, v[0])
 		} else {
