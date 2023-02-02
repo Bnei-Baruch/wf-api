@@ -123,7 +123,7 @@ func PutRecord(c *gin.Context) {
 	if err != nil {
 		NewBadRequestError(err).Abort(c)
 	}
-	err = models.CreateRecord(&t)
+	err = models.CreateRecord(t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
