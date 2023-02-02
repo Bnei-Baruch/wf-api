@@ -1,6 +1,9 @@
 package models
 
-import "github.com/jackc/pgtype"
+import (
+	"encoding/json"
+	"github.com/jackc/pgtype"
+)
 
 func (State) TableName() string {
 	return "state"
@@ -14,23 +17,23 @@ type State struct {
 }
 
 func GetState(id string) (interface{}, error) {
-	var state interface{}
-	r := DB.Raw("SELECT data FROM state WHERE state_id = ?", id).Scan(&state)
+	var s State
+	r := DB.Raw("SELECT data FROM state WHERE state_id = ?", id).Scan(&s)
 	if r.Error != nil {
 		return nil, r.Error
 	}
 
-	return state, nil
+	return s.Data, nil
 }
 
 func GetStateProp(id string, prop string) (interface{}, error) {
-	var state interface{}
-	r := DB.Raw("SELECT data->>? FROM state WHERE state_id = ?", prop, id).Scan(&state)
-	if r.Error != nil {
-		return nil, r.Error
-	}
+	var s []byte
+	var data interface{}
+	r := DB.Raw("SELECT data->>? FROM state WHERE state_id = ?", prop, id).Row()
+	r.Scan(&s)
+	_ = json.Unmarshal(s, &data)
 
-	return state, nil
+	return data, nil
 }
 
 func RemoveStateProp(id string, prop string) error {
@@ -40,4 +43,50 @@ func RemoveStateProp(id string, prop string) error {
 	}
 
 	return nil
+}
+
+func GetStateByTag(id string, tag string) (map[string]interface{}, error) {
+	rows, err := DB.Model(&State{}).Where("tag = ?", tag).Select("id, state_id, data").Rows()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	states := make(map[string]interface{})
+
+	for rows.Next() {
+		var s State
+		var o map[string]interface{}
+		var obj []byte
+		if err := rows.Scan(&s.ID, &s.StateID, &obj); err != nil {
+			return nil, err
+		}
+		json.Unmarshal(obj, &o)
+		states[s.StateID] = o
+	}
+
+	return states, nil
+}
+
+func GetStates() ([]State, error) {
+	rows, err := DB.Model(&State{}).Select("id, state_id, data, tag").Order("tag").Rows()
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	states := []State{}
+
+	for rows.Next() {
+		var s State
+		var obj []byte
+		if err := rows.Scan(&s.ID, &s.StateID, &obj, &s.Tag); err != nil {
+			return nil, err
+		}
+		json.Unmarshal(obj, &s.Data)
+		states = append(states, s)
+	}
+
+	return states, nil
 }

@@ -263,9 +263,27 @@ func GetAricha(c *gin.Context) {
 
 // State
 
+func GetStates(c *gin.Context) {
+	if r, err := models.GetStates(); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 func GetStateByID(c *gin.Context) {
 	id := c.Params.ByName("id")
 	if r, err := models.GetState(id); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+func GetStateByTag(c *gin.Context) {
+	id := c.Params.ByName("id")
+	tag := c.Params.ByName("tag")
+	if r, err := models.GetStateByTag(id, tag); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)

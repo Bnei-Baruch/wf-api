@@ -3,9 +3,11 @@ package api
 import "github.com/gin-gonic/gin"
 
 func SetupRoutes(router *gin.Engine) {
-	router.GET("/state/:id", GetStateByID)
-	router.GET("/state/:id/:prop", GetStateByProp)
-	router.DELETE("/state/:id", RemoveStateProp)
+	router.GET("/states", GetStates)
+	router.GET("/state/:tag", GetStateByTag)
+	router.GET("/state/:tag/:id", GetStateByID)
+	router.GET("/state/:tag/:id/:prop", GetStateByProp)
+	router.DELETE("/state/:tag/:id", RemoveStateProp)
 
 	router.GET("/:root/find", V1GetRecordsByKV)
 	router.GET("/:root/kv", V2GetRecordsByKV)
