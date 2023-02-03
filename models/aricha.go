@@ -13,7 +13,7 @@ type Aricha struct {
 	TrimID   string       `json:"aricha_id" gorm:"primaryKey"`
 	Date     string       `json:"date"`
 	FileName string       `json:"file_name"`
-	Parent   pgtype.JSONB `json:"parent"`
+	Parent   pgtype.JSONB `json:"parent" gorm:"type:jsonb"`
 	Line     pgtype.JSONB `json:"line" gorm:"type:jsonb"`
 	Original pgtype.JSONB `json:"original" gorm:"type:jsonb"`
 	Proxy    pgtype.JSONB `json:"proxy" gorm:"type:jsonb"`

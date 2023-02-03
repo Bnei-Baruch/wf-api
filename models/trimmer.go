@@ -16,7 +16,7 @@ type Trimmer struct {
 	FileName  string          `json:"file_name"`
 	Inpoints  pq.Float32Array `json:"inpoints" gorm:"type:numeric"`
 	Outpoints pq.Float32Array `json:"outpoints" gorm:"type:numeric"`
-	Parent    pgtype.JSONB    `json:"parent"`
+	Parent    pgtype.JSONB    `json:"parent" gorm:"type:jsonb"`
 	Line      pgtype.JSONB    `json:"line" gorm:"type:jsonb"`
 	Original  pgtype.JSONB    `json:"original" gorm:"type:jsonb"`
 	Proxy     pgtype.JSONB    `json:"proxy" gorm:"type:jsonb"`

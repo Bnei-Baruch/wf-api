@@ -11,7 +11,7 @@ type Job struct {
 	FileName string       `json:"file_name"`
 	JobName  string       `json:"job_name"`
 	JobType  string       `json:"job_type"`
-	Parent   pgtype.JSONB `json:"parent"`
+	Parent   pgtype.JSONB `json:"parent" gorm:"type:jsonb"`
 	Line     pgtype.JSONB `json:"line" gorm:"type:jsonb"`
 	Original pgtype.JSONB `json:"original" gorm:"type:jsonb"`
 	Proxy    pgtype.JSONB `json:"proxy" gorm:"type:jsonb"`
