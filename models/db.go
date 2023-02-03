@@ -193,7 +193,7 @@ func FindByJSON(table string, prop string, values url.Values, t interface{}) (in
 	return t, nil
 }
 
-func UpdateJSONB(idKey string, idVal string, propKey string, propVal interface{}, table string, prop string) error {
+func UpdateJSONB(idKey string, idVal string, prop string, propVal interface{}, table string, propKey string) error {
 	var sqlCmd string
 	var varType string
 	if _, ok := propVal.(string); ok {
