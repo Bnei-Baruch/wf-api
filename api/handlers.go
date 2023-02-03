@@ -208,7 +208,7 @@ func RemoveRecord(c *gin.Context) {
 	idKey := ids[root]
 	idVal := c.Params.ByName("id")
 	t := recd[root]
-	err := models.RemoveRecord(idKey, idVal, &t)
+	err := models.RemoveRecord(idKey, idVal, t)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
