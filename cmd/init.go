@@ -50,11 +50,11 @@ func Init() {
 	gin.SetMode(viper.GetString("server.mode"))
 	router := gin.New()
 	router.Use(
+		cors.New(corsConfig),
 		utils.MdbLoggerMiddleware(),
 		utils.EnvMiddleware(models.DB, oidcIDTokenVerifier),
 		utils.ErrorHandlingMiddleware(),
 		utils.AuthenticationMiddleware(),
-		cors.New(corsConfig),
 		utils.RecoveryMiddleware())
 
 	api.SetupRoutes(router)
