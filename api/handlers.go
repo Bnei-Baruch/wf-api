@@ -142,7 +142,7 @@ func UpdateRecord(c *gin.Context) {
 	val := c.Query("value")
 	var err error
 	var t map[string]interface{}
-	err = c.BindJSON(&t)
+	err = c.ShouldBindJSON(&t)
 
 	if val == "" && err != nil {
 		NewBadRequestError(err).Abort(c)
@@ -178,7 +178,7 @@ func UpdateJsonbRecord(c *gin.Context) {
 	val := c.Query("value")
 	var err error
 	var t map[string]interface{}
-	err = c.BindJSON(&t)
+	err = c.ShouldBindJSON(&t)
 
 	if val == "" && err != nil {
 		NewBadRequestError(err).Abort(c)
