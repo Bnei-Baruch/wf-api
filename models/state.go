@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"github.com/jackc/pgtype"
+	"gorm.io/gorm/clause"
 )
 
 func (State) TableName() string {
@@ -89,4 +90,12 @@ func GetStates() ([]State, error) {
 	}
 
 	return states, nil
+}
+
+func PutStateByID(s interface{}) error {
+	r := DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(s)
+	if r.Error != nil {
+		return r.Error
+	}
+	return nil
 }

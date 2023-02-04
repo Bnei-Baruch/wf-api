@@ -311,3 +311,39 @@ func RemoveStateProp(c *gin.Context) {
 		go SendMessage("langcheck")
 	}
 }
+
+func PutStateByID(c *gin.Context) {
+	var t models.State
+	t.StateID = c.Params.ByName("id")
+	t.Tag = c.Params.ByName("tag")
+	err := c.BindJSON(&t.Data)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+
+	err = models.CreateRecord(t)
+
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
+
+//func PostStateByID(c *gin.Context) {
+//	var t models.State
+//	err := c.BindJSON(&t)
+//	if err != nil {
+//		NewBadRequestError(err).Abort(c)
+//	}
+//	id := c.Params.ByName("id")
+//	tag := c.Params.ByName("tag")
+//
+//	err = models.UpdateRecord(t)
+//
+//	if err != nil {
+//		NewInternalError(err).Abort(c)
+//	} else {
+//		c.JSON(http.StatusOK, gin.H{"result": "success"})
+//	}
+//}

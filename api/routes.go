@@ -3,11 +3,16 @@ package api
 import "github.com/gin-gonic/gin"
 
 func SetupRoutes(router *gin.Engine) {
+	state := router.Group("state")
+	state.GET("/:tag", GetStateByTag)
+	state.GET("/:tag/:id", GetStateByID)
+	state.GET("/:tag/:id/:prop", GetStateByProp)
+	state.DELETE("/:tag/:id", RemoveStateProp)
+	state.PUT("/:tag/:id", PutStateByID)
+	state.POST("/:tag/:id", PutStateByID)
+	//state.PUT("/:tag/:id/:prop", PutStateByProp)
+	//state.POST("/:tag/:id/:prop", PostStateByProp)
 	router.GET("/states", GetStates)
-	router.GET("/state/:tag", GetStateByTag)
-	router.GET("/state/:tag/:id", GetStateByID)
-	router.GET("/state/:tag/:id/:prop", GetStateByProp)
-	router.DELETE("/state/:tag/:id", RemoveStateProp)
 
 	router.GET("/:root/find", V1GetRecordsByKV)
 	router.GET("/:root/kv", V2GetRecordsByKV)
