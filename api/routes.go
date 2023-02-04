@@ -7,10 +7,11 @@ func SetupRoutes(router *gin.Engine) {
 	state.GET("/:tag", GetStateByTag)
 	state.GET("/:tag/:id", GetStateByID)
 	state.GET("/:tag/:id/:prop", GetStateByProp)
-	state.DELETE("/:tag/:id", RemoveStateProp)
+	//state.DELETE("/:tag/:id", RemoveRecord)
 	state.PUT("/:tag/:id", PutStateByID)
 	state.POST("/:tag/:id", PutStateByID)
 	state.PUT("/:tag/:id/:prop", PutStateByProp)
+	state.DELETE("/:tag/:id/:prop", RemoveStateByProp)
 	//state.POST("/:tag/:id/:prop", PostStateByProp)
 	router.GET("/states", GetStates)
 

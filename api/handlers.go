@@ -300,7 +300,7 @@ func GetStateByProp(c *gin.Context) {
 	}
 }
 
-func RemoveStateProp(c *gin.Context) {
+func RemoveStateByProp(c *gin.Context) {
 	id := c.Params.ByName("id")
 	prop := c.Params.ByName("prop")
 	err := models.RemoveStateProp(id, prop)
