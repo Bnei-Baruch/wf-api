@@ -330,20 +330,20 @@ func PutStateByID(c *gin.Context) {
 	}
 }
 
-//func PostStateByID(c *gin.Context) {
-//	var t models.State
-//	err := c.BindJSON(&t)
-//	if err != nil {
-//		NewBadRequestError(err).Abort(c)
-//	}
-//	id := c.Params.ByName("id")
-//	tag := c.Params.ByName("tag")
-//
-//	err = models.UpdateRecord(t)
-//
-//	if err != nil {
-//		NewInternalError(err).Abort(c)
-//	} else {
-//		c.JSON(http.StatusOK, gin.H{"result": "success"})
-//	}
-//}
+func PutStateByProp(c *gin.Context) {
+	var t map[string]interface{}
+	err := c.ShouldBindJSON(&t)
+	if err != nil {
+		NewBadRequestError(err).Abort(c)
+	}
+	id := c.Params.ByName("id")
+	prop := c.Params.ByName("prop")
+
+	err = models.UpdateJSONB("state_id", id, "data", t, "state", prop)
+
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+	}
+}
