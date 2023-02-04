@@ -313,7 +313,7 @@ func RemoveStateByProp(c *gin.Context) {
 }
 
 func PutStateByID(c *gin.Context) {
-	var t models.State
+	t := &models.State{}
 	t.StateID = c.Params.ByName("id")
 	t.Tag = c.Params.ByName("tag")
 	err := c.BindJSON(&t.Data)
