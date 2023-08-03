@@ -15,6 +15,8 @@ func SetupRoutes(router *gin.Engine) {
 	//state.POST("/:tag/:id/:prop", PostStateByProp)
 	router.GET("/states", GetStates)
 
+	router.GET("/source/file_uid/:uid", GetSourceByUID)
+
 	router.GET("/:root/find", V1GetRecordsByKV)
 	router.GET("/:root/kv", V2GetRecordsByKV)
 	router.GET("/:root/js/:prop", GetRecordsByJSON)
