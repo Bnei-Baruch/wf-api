@@ -159,7 +159,7 @@ func SendMessage(id string) {
 		log.Errorf("MQTT: Message parsing error: %s", err)
 	}
 
-	if token := MQTT.Publish(topic, byte(1), false, message); token.Wait() && token.Error() != nil {
+	if token := MQTT.Publish(topic, byte(1), true, message); token.Wait() && token.Error() != nil {
 		log.Errorf("MQTT: Publish error: %s, reason: %s", topic, token.Error())
 	}
 
