@@ -34,5 +34,4 @@ func SetupRoutes(router *gin.Engine) {
 	//router.GET("/drim/:id", )
 	//router.GET("/jobs_list", )
 	//router.GET("/cassette", )
-	//router.GET("/states", )
 }

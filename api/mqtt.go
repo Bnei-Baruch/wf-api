@@ -1,20 +1,17 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/Bnei-Baruch/wf-api/models"
-	"github.com/eclipse/paho.golang/autopaho"
-	"github.com/eclipse/paho.golang/paho"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"net/url"
 	"strings"
 	"time"
 )
 
-var MQTT *autopaho.ConnectionManager
+var MQTT mqtt.Client
 
 type MqttPayload struct {
 	Action  string      `json:"action,omitempty"`
@@ -30,71 +27,43 @@ type MqttPayload struct {
 func InitMQTT() error {
 	log.Info("MQTT: Init")
 
-	serverURL, err := url.Parse(viper.GetString("mqtt.url"))
-	if err != nil {
-		log.Errorf("MQTT: Init error: %s", err)
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(viper.GetString("mqtt.url"))
+	opts.SetClientID(viper.GetString("mqtt.client_id"))
+	opts.SetUsername(viper.GetString("mqtt.user"))
+	opts.SetPassword(viper.GetString("mqtt.password"))
+	opts.SetAutoReconnect(true)
+	opts.SetOnConnectHandler(SubMQTT)
+	opts.SetConnectionLostHandler(LostMQTT)
+	MQTT := mqtt.NewClient(opts)
+	if token := MQTT.Connect(); token.Wait() && token.Error() != nil {
+		return token.Error()
 	}
-
-	cliCfg := autopaho.ClientConfig{
-		BrokerUrls:        []*url.URL{serverURL},
-		KeepAlive:         10,
-		ConnectRetryDelay: 3 * time.Second,
-		OnConnectionUp: func(cm *autopaho.ConnectionManager, connAck *paho.Connack) {
-			log.Info("MQTT: Connection up")
-			if _, err := cm.Subscribe(context.Background(), &paho.Subscribe{
-				Subscriptions: map[string]paho.SubscribeOptions{
-					viper.GetString("mqtt.topic"): {QoS: byte(1)},
-				},
-			}); err != nil {
-				log.Errorf("MQTT: Subscribe error: %s", err)
-				return
-			}
-			log.Info("MQTT: Subscription made")
-		},
-		OnConnectError: func(err error) {
-			log.Errorf("MQTT: Attempting connection error: %s", err)
-		},
-		ClientConfig: paho.ClientConfig{
-			ClientID: viper.GetString("mqtt.client_id"),
-			//Router: paho.RegisterHandler(common.WorkflowExec, m.execMessage),
-			Router: paho.NewStandardRouter(),
-			OnClientError: func(err error) {
-				log.Errorf("MQTT: Client error: %s", err)
-			},
-			OnServerDisconnect: func(d *paho.Disconnect) {
-				if d.Properties != nil {
-					log.Errorf("MQTT: Server requested disconnect: %s", d.Properties.ReasonString)
-				} else {
-					log.Errorf("MQTT: Server requested disconnect: %s", d.ReasonCode)
-				}
-			},
-		},
-	}
-
-	cliCfg.SetUsernamePassword(viper.GetString("mqtt.user"), []byte(viper.GetString("mqtt.password")))
 
 	if viper.GetString("mqtt.debug") == "true" {
-		debugLog := NewPahoLogAdapter(1)
-		cliCfg.Debug = debugLog
-		cliCfg.PahoDebug = debugLog
+		NewPahoLogAdapter(1)
 	}
-
-	MQTT, err = autopaho.NewConnection(context.Background(), cliCfg)
-	if err != nil {
-		log.Errorf("MQTT: Fail to connect: %s", err)
-		return err
-	}
-
-	cliCfg.Router.RegisterHandler(viper.GetString("mqtt.topic"), execMessage)
 
 	return nil
 }
 
-func execMessage(m *paho.Publish) {
-	//log.Debugf("MQTT: Received message: %s from topic: %s\n", string(m.Payload), m.Topic)
+func SubMQTT(c mqtt.Client) {
+	if token := c.Subscribe(viper.GetString("mqtt.topic"), byte(1), execMessage); token.Wait() && token.Error() != nil {
+		log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.topic"))
+	} else {
+		log.Errorf("MQTT: Subscribe error: %s", token.Error())
+	}
+}
+
+func LostMQTT(c mqtt.Client, err error) {
+	log.Errorf("MQTT: Lost connection: %s", err)
+}
+
+func execMessage(c mqtt.Client, m mqtt.Message) {
+	log.Debugf("MQTT: Received message: %s from topic: %s\n", m.Payload(), m.Topic())
 	id := "false"
-	s := strings.Split(m.Topic, "/")
-	p := string(m.Payload)
+	s := strings.Split(m.Topic(), "/")
+	p := string(m.Payload())
 
 	if s[0] == "kli" && len(s) == 5 {
 		id = s[4]
@@ -146,15 +115,11 @@ func SendRespond(id string, m *MqttPayload) {
 		log.Errorf("MQTT: Message parsing error: %s", err)
 	}
 
-	pa, err := MQTT.Publish(context.Background(), &paho.Publish{
-		QoS:     byte(1),
-		Retain:  false,
-		Topic:   topic,
-		Payload: message,
-	})
-	if err != nil {
-		log.Errorf("MQTT: Publish error: %s, reason: %s", err, pa.Properties.ReasonString)
+	if token := MQTT.Publish(topic, byte(1), false, message); token.Wait() && token.Error() != nil {
+		log.Errorf("MQTT: Publish error: %s, reason: %s", topic, token.Error())
 	}
+
+	log.Debugf("MQTT: Send message: %s to topic: %s\n", string(message), topic)
 }
 
 func SendMessage(id string) {
@@ -194,14 +159,8 @@ func SendMessage(id string) {
 		log.Errorf("MQTT: Message parsing error: %s", err)
 	}
 
-	pa, err := MQTT.Publish(context.Background(), &paho.Publish{
-		QoS:     byte(1),
-		Retain:  true,
-		Topic:   topic,
-		Payload: message,
-	})
-	if err != nil {
-		log.Errorf("MQTT: Publish error: %s, reason: %s", err, pa.Properties.ReasonString)
+	if token := MQTT.Publish(topic, byte(1), false, message); token.Wait() && token.Error() != nil {
+		log.Errorf("MQTT: Publish error: %s, reason: %s", topic, token.Error())
 	}
 
 	log.Debugf("MQTT: Send message: %s to topic: %s\n", string(message), topic)

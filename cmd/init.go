@@ -43,7 +43,7 @@ func Init() {
 
 	// Setup mqtt
 	if err := api.InitMQTT(); err != nil {
-		log.Infof("MQTT Init error: %s", err)
+		log.Errorf("MQTT Init error: %s", err)
 	}
 
 	// Setup http
