@@ -7,7 +7,6 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"strings"
 	"time"
 )
 
@@ -24,8 +23,28 @@ type MqttPayload struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+type PahoLogAdapter struct {
+	level log.Level
+}
+
+func NewPahoLogAdapter(level log.Level) *PahoLogAdapter {
+	return &PahoLogAdapter{level: level}
+}
+
+func (a *PahoLogAdapter) Println(v ...interface{}) {
+	log.Infof("MQTT: %s", fmt.Sprint(v...))
+}
+
+func (a *PahoLogAdapter) Printf(format string, v ...interface{}) {
+	log.Infof("MQTT: %s", fmt.Sprintf(format, v...))
+}
+
 func InitMQTT() error {
 	log.Info("MQTT: Init")
+	mqtt.DEBUG = NewPahoLogAdapter(log.DebugLevel)
+	mqtt.WARN = NewPahoLogAdapter(log.WarnLevel)
+	mqtt.CRITICAL = NewPahoLogAdapter(log.PanicLevel)
+	mqtt.ERROR = NewPahoLogAdapter(log.ErrorLevel)
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(viper.GetString("mqtt.url"))
@@ -39,16 +58,11 @@ func InitMQTT() error {
 	if token := MQTT.Connect(); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
-
-	//if viper.GetString("mqtt.debug") == "true" {
-	//	NewPahoLogAdapter(1)
-	//}
-
 	return nil
 }
 
 func SubMQTT(c mqtt.Client) {
-	if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), execMessage); token.Wait() && token.Error() != nil {
+	if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), gotMessage); token.Wait() && token.Error() != nil {
 		log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.topic"))
 	} else {
 		log.Errorf("MQTT: Subscribe error: %s", token.Error())
@@ -59,47 +73,8 @@ func LostMQTT(c mqtt.Client, err error) {
 	log.Errorf("MQTT: Lost connection: %s", err)
 }
 
-func execMessage(c mqtt.Client, m mqtt.Message) {
+func gotMessage(c mqtt.Client, m mqtt.Message) {
 	log.Debugf("MQTT: Received message: %s from topic: %s\n", m.Payload(), m.Topic())
-	id := "false"
-	s := strings.Split(m.Topic(), "/")
-	p := string(m.Payload())
-
-	if s[0] == "kli" && len(s) == 5 {
-		id = s[4]
-	} else if s[0] == "exec" && len(s) == 4 {
-		id = s[3]
-	}
-
-	if id == "false" {
-		switch p {
-		case "start":
-			//	go a.startExecMqtt(p)
-			//case "stop":
-			//	go a.stopExecMqtt(p)
-			//case "status":
-			//	go a.execStatusMqtt(p)
-		}
-	}
-
-	if id != "false" {
-		switch p {
-		case "start":
-			//	go a.startExecMqttByID(p, id)
-			//case "stop":
-			//	go a.stopExecMqttByID(p, id)
-			//case "status":
-			//	go a.execStatusMqttByID(p, id)
-			//case "cmdstat":
-			//	go a.cmdStatMqtt(p, id)
-			//case "progress":
-			//	go a.getProgressMqtt(p, id)
-			//case "report":
-			//	go a.getReportMqtt(p, id)
-			//case "alive":
-			//	go a.isAliveMqtt(p, id)
-		}
-	}
 }
 
 func SendRespond(id string, m *MqttPayload) {
@@ -164,20 +139,4 @@ func SendMessage(id string) {
 	}
 
 	log.Debugf("MQTT: Send message from: %s to topic: %s\n", id, topic)
-}
-
-type PahoLogAdapter struct {
-	level log.Level
-}
-
-func NewPahoLogAdapter(level log.Level) *PahoLogAdapter {
-	return &PahoLogAdapter{level: level}
-}
-
-func (a *PahoLogAdapter) Println(v ...interface{}) {
-	log.Infof("MQTT: %s", fmt.Sprint(v...))
-}
-
-func (a *PahoLogAdapter) Printf(format string, v ...interface{}) {
-	log.Infof("MQTT: %s", fmt.Sprintf(format, v...))
 }
