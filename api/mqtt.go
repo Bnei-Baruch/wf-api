@@ -33,22 +33,22 @@ func InitMQTT() error {
 	opts.SetUsername(viper.GetString("mqtt.user"))
 	opts.SetPassword(viper.GetString("mqtt.password"))
 	opts.SetAutoReconnect(true)
-	opts.SetOnConnectHandler(SubMQTT)
+	//opts.SetOnConnectHandler(SubMQTT)
 	opts.SetConnectionLostHandler(LostMQTT)
-	MQTT := mqtt.NewClient(opts)
+	MQTT = mqtt.NewClient(opts)
 	if token := MQTT.Connect(); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 
-	if viper.GetString("mqtt.debug") == "true" {
-		NewPahoLogAdapter(1)
-	}
+	//if viper.GetString("mqtt.debug") == "true" {
+	//	NewPahoLogAdapter(1)
+	//}
 
 	return nil
 }
 
 func SubMQTT(c mqtt.Client) {
-	if token := c.Subscribe(viper.GetString("mqtt.topic"), byte(1), execMessage); token.Wait() && token.Error() != nil {
+	if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), execMessage); token.Wait() && token.Error() != nil {
 		log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.topic"))
 	} else {
 		log.Errorf("MQTT: Subscribe error: %s", token.Error())
@@ -163,7 +163,7 @@ func SendMessage(id string) {
 		log.Errorf("MQTT: Publish error: %s, reason: %s", topic, token.Error())
 	}
 
-	log.Debugf("MQTT: Send message: %s to topic: %s\n", string(message), topic)
+	log.Debugf("MQTT: Send message from: %s to topic: %s\n", id, topic)
 }
 
 type PahoLogAdapter struct {
