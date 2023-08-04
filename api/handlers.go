@@ -352,8 +352,7 @@ func PutStateByProp(c *gin.Context) {
 
 func GetSourceByUID(c *gin.Context) {
 	uid := c.Params.ByName("uid")
-	var s models.Source
-	if r, err := models.GetSourceByUID(s, uid); err != nil {
+	if r, err := models.GetSourceByUID(uid); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)

@@ -1,6 +1,9 @@
 package models
 
-import "github.com/jackc/pgtype"
+import (
+	"github.com/jackc/pgtype"
+)
+import "encoding/json"
 
 func (Source) TableName() string {
 	return "source"
@@ -17,11 +20,17 @@ type Source struct {
 	Wfstatus pgtype.JSONB `json:"wfstatus" gorm:"type:jsonb"`
 }
 
-func GetSourceByUID(t interface{}, uid string) (interface{}, error) {
-	r := DB.Raw("SELECT source->'kmedia' FROM source WHERE source->'kmedia'->>'file_uid' =  ?", uid).Scan(&t)
+func GetSourceByUID(uid string) (interface{}, error) {
+	t := map[string]interface{}{}
+
+	r := DB.Raw("SELECT source['kmedia'] FROM source WHERE source->'kmedia'->>'file_uid' = ?", uid).Scan(&t)
 	if r.Error != nil {
 		return nil, r.Error
 	}
 
-	return t, nil
+	j := t["source"].(string)
+	var data map[string]interface{}
+	json.Unmarshal([]byte(j), &data)
+
+	return data, nil
 }
