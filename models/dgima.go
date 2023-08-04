@@ -11,7 +11,7 @@ func (Dgima) TableName() string {
 
 type Dgima struct {
 	ID        int             `json:"id" gorm:"autoIncrement"`
-	TrimID    string          `json:"dgima_id" gorm:"primaryKey"`
+	DgimaID   string          `json:"dgima_id" gorm:"primaryKey"`
 	Date      string          `json:"date"`
 	FileName  string          `json:"file_name"`
 	Inpoints  pq.Float32Array `json:"inpoints" gorm:"type:numeric"`

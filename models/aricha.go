@@ -10,7 +10,7 @@ func (Aricha) TableName() string {
 
 type Aricha struct {
 	ID       int          `json:"id" gorm:"autoIncrement"`
-	TrimID   string       `json:"aricha_id" gorm:"primaryKey"`
+	ArichaID string       `json:"aricha_id" gorm:"primaryKey"`
 	Date     string       `json:"date"`
 	FileName string       `json:"file_name"`
 	Parent   pgtype.JSONB `json:"parent" gorm:"type:jsonb"`
