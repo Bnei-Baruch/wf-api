@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"github.com/jackc/pgtype"
 )
 import "encoding/json"
@@ -28,9 +29,17 @@ func GetSourceByUID(uid string) (interface{}, error) {
 		return nil, r.Error
 	}
 
+	if t["source"] == nil {
+		err := errors.New("not found")
+		return nil, err
+	}
+
 	j := t["source"].(string)
 	var data map[string]interface{}
-	json.Unmarshal([]byte(j), &data)
+	err := json.Unmarshal([]byte(j), &data)
+	if err != nil {
+		return nil, err
+	}
 
 	return data, nil
 }
