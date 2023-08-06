@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/jackc/pgtype"
+	"gorm.io/datatypes"
 )
 
 func (State) TableName() string {
@@ -10,10 +10,10 @@ func (State) TableName() string {
 }
 
 type State struct {
-	ID      int          `json:"id" gorm:"autoIncrement"`
-	StateID string       `json:"state_id" gorm:"primaryKey"`
-	Data    pgtype.JSONB `json:"data" gorm:"type:jsonb"`
-	Tag     string       `json:"tag"`
+	ID      int            `json:"id" gorm:"autoIncrement"`
+	StateID string         `json:"state_id" gorm:"primaryKey"`
+	Data    datatypes.JSON `json:"data" gorm:"type:jsonb"`
+	Tag     string         `json:"tag"`
 }
 
 func GetState(id string) (interface{}, error) {

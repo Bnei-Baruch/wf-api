@@ -2,25 +2,25 @@ package models
 
 import (
 	"fmt"
-	"github.com/jackc/pgtype"
+	"gorm.io/datatypes"
 	"net/url"
 	"strings"
 )
 
 type Product struct {
-	ID          int          `json:"id" gorm:"autoIncrement"`
-	ProductID   string       `json:"product_id" gorm:"primaryKey"`
-	Date        string       `json:"date"`
-	Language    string       `json:"language"`
-	Pattern     string       `json:"pattern"`
-	TypeID      string       `json:"type_id"`
-	ProductName string       `json:"product_name"`
-	ProductType string       `json:"product_type"`
-	I18n        pgtype.JSONB `json:"i18n" gorm:"type:jsonb"`
-	Parent      pgtype.JSONB `json:"parent" gorm:"type:jsonb"`
-	Line        pgtype.JSONB `json:"line" gorm:"type:jsonb"`
-	Properties  pgtype.JSONB `json:"properties" gorm:"type:jsonb"`
-	FilmDate    string       `json:"film_date"`
+	ID          int            `json:"id" gorm:"autoIncrement"`
+	ProductID   string         `json:"product_id" gorm:"primaryKey"`
+	Date        string         `json:"date"`
+	Language    string         `json:"language"`
+	Pattern     string         `json:"pattern"`
+	TypeID      string         `json:"type_id"`
+	ProductName string         `json:"product_name"`
+	ProductType string         `json:"product_type"`
+	I18n        datatypes.JSON `json:"i18n" gorm:"type:jsonb"`
+	Parent      datatypes.JSON `json:"parent" gorm:"type:jsonb"`
+	Line        datatypes.JSON `json:"line" gorm:"type:jsonb"`
+	Properties  datatypes.JSON `json:"properties" gorm:"type:jsonb"`
+	FilmDate    string         `json:"film_date"`
 }
 
 func FindByDF(values url.Values, t interface{}) (interface{}, error) {

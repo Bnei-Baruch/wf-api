@@ -2,7 +2,7 @@ package models
 
 import (
 	"errors"
-	"github.com/jackc/pgtype"
+	"gorm.io/datatypes"
 )
 import "encoding/json"
 
@@ -11,14 +11,14 @@ func (Source) TableName() string {
 }
 
 type Source struct {
-	ID       int          `json:"id" gorm:"autoIncrement"`
-	SourceID string       `json:"source_id" gorm:"primaryKey"`
-	Date     string       `json:"date"`
-	FileName string       `json:"file_name"`
-	Sha1     string       `json:"sha1"`
-	Line     pgtype.JSONB `json:"line" gorm:"type:jsonb"`
-	Source   pgtype.JSONB `json:"source" gorm:"type:jsonb"`
-	Wfstatus pgtype.JSONB `json:"wfstatus" gorm:"type:jsonb"`
+	ID       int            `json:"id" gorm:"autoIncrement"`
+	SourceID string         `json:"source_id" gorm:"primaryKey"`
+	Date     string         `json:"date"`
+	FileName string         `json:"file_name"`
+	Sha1     string         `json:"sha1"`
+	Line     datatypes.JSON `json:"line" gorm:"type:jsonb"`
+	Source   datatypes.JSON `json:"source" gorm:"type:jsonb"`
+	Wfstatus datatypes.JSON `json:"wfstatus" gorm:"type:jsonb"`
 }
 
 func GetSourceByUID(uid string) (interface{}, error) {
