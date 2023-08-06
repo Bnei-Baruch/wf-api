@@ -47,6 +47,8 @@ func InitMQTT() error {
 	mqtt.ERROR = NewPahoLogAdapter(log.ErrorLevel)
 
 	opts := mqtt.NewClientOptions()
+	opts.SetOrderMatters(false)
+	opts.SetKeepAlive(10 * time.Second)
 	opts.AddBroker(viper.GetString("mqtt.url"))
 	opts.SetClientID(viper.GetString("mqtt.client_id"))
 	opts.SetUsername(viper.GetString("mqtt.user"))
@@ -74,7 +76,7 @@ func LostMQTT(c mqtt.Client, err error) {
 }
 
 func gotMessage(c mqtt.Client, m mqtt.Message) {
-	log.Debugf("MQTT: Received message: %s from topic: %s\n", m.Payload(), m.Topic())
+	log.Debugf("MQTT: Received message from topic: %s\n", m.Topic())
 }
 
 func SendRespond(id string, m *MqttPayload) {
@@ -127,6 +129,8 @@ func SendMessage(id string) {
 	case "langcheck":
 		topic = viper.GetString("mqtt.state_langcheck_topic")
 		m, _ = models.GetState("langcheck")
+	default:
+		return
 	}
 
 	message, err := json.Marshal(m)
@@ -134,7 +138,7 @@ func SendMessage(id string) {
 		log.Errorf("MQTT: Message parsing error: %s", err)
 	}
 
-	if token := MQTT.Publish(topic, byte(1), true, message); token.Wait() && token.Error() != nil {
+	if token := MQTT.Publish(topic, byte(0), true, message); token.Wait() && token.Error() != nil {
 		log.Errorf("MQTT: Publish error: %s, reason: %s", topic, token.Error())
 	}
 
