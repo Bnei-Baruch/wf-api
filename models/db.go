@@ -75,7 +75,7 @@ func FindByID(key string, id string, s interface{}) (interface{}, error) {
 }
 
 func V1FindByKV(key string, val string, s interface{}) (interface{}, error) {
-	err := DB.Debug().Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
+	err := DB.Debug().Order("id").Where(key+" LIKE ?", "%"+val+"%").Find(&s).Error
 	if err != nil {
 		return nil, err
 	}

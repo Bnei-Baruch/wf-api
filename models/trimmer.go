@@ -24,6 +24,6 @@ type Trimmer struct {
 }
 
 func FindTrimmed(t interface{}) (interface{}, error) {
-	err := DB.Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error
+	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error
 	return t, err
 }
