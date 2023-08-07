@@ -48,7 +48,7 @@ func InitMQTT() error {
 	mqtt.ERROR = NewPahoLogAdapter(log.ErrorLevel)
 
 	opts := mqtt.NewClientOptions()
-	opts.SetOrderMatters(false)
+	//opts.SetOrderMatters(false)
 	opts.SetKeepAlive(10 * time.Second)
 	opts.AddBroker(viper.GetString("mqtt.url"))
 	opts.SetClientID(viper.GetString("mqtt.client_id"))
@@ -140,7 +140,7 @@ func SendMessage(id string) {
 		log.Errorf("MQTT: Message parsing error: %s", err)
 	}
 
-	if token := MQTT.Publish(topic, byte(0), true, message); token.Wait() && token.Error() != nil {
+	if token := MQTT.Publish(topic, byte(1), true, message); token.Wait() && token.Error() != nil {
 		log.Errorf("MQTT: Publish error: %s, reason: %s", topic, token.Error())
 	}
 
