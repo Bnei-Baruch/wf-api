@@ -129,6 +129,9 @@ func PutRecord(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 		go SendMessage(root)
+		if root == "trimmer" {
+			go SendMessage("trim")
+		}
 	}
 }
 
@@ -164,6 +167,9 @@ func UpdateRecord(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 		go SendMessage(root)
+		if root == "trimmer" {
+			go SendMessage("trim")
+		}
 	}
 }
 
@@ -200,6 +206,9 @@ func UpdateJsonbRecord(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 		go SendMessage(root)
+		if root == "trimmer" {
+			go SendMessage("trim")
+		}
 	}
 }
 
@@ -214,6 +223,9 @@ func RemoveRecord(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
 		go SendMessage(root)
+		if root == "trimmer" {
+			go SendMessage("trim")
+		}
 	}
 }
 
