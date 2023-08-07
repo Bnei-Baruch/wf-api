@@ -7,6 +7,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"net/url"
 	"time"
 )
 
@@ -103,17 +104,18 @@ func SendMessage(id string) {
 	var topic string
 	var m interface{}
 	date := time.Now().Format("2006-01-02")
+	d := url.Values{"date": []string{date}}
 
 	switch id {
 	case "ingest":
 		topic = viper.GetString("mqtt.monitor_ingest_topic")
-		m, _ = models.V1FindByKV("date", date, []models.Ingest{})
+		m, _ = models.V2FindByKV(id, d, []models.Ingest{})
 	case "trimmer":
 		topic = viper.GetString("mqtt.monitor_trimmer_topic")
-		m, _ = models.V1FindByKV("date", date, []models.Trimmer{})
+		m, _ = models.V2FindByKV(id, d, []models.Trimmer{})
 	case "archive":
 		topic = viper.GetString("mqtt.monitor_archive_topic")
-		m, _ = models.V1FindByKV("date", date, []models.Kmedia{})
+		m, _ = models.V2FindByKV(id, d, []models.Kmedia{})
 	case "trim":
 		topic = viper.GetString("mqtt.state_trimmer_topic")
 		m, _ = models.FindTrimmed([]models.Trimmer{})
