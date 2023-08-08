@@ -40,7 +40,10 @@ func InitDB() {
 		log.Infof("DB connection error: %s", err)
 		return
 	}
-	DB.AutoMigrate()
+	err = DB.AutoMigrate()
+	if err != nil {
+		log.Infof("DB AutoMigrate error: %s", err)
+	}
 }
 
 func CreateRecord(s interface{}) error {
