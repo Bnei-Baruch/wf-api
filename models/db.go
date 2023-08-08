@@ -31,8 +31,10 @@ func InitDB() {
 		viper.GetString("db.port"),
 	)
 	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: gorm_logrus.New().LogMode(logger.Info),
+	DB, err = gorm.Open(postgres.New(postgres.Config{
+		DSN: dsn, PreferSimpleProtocol: true,
+	}), &gorm.Config{
+		SkipDefaultTransaction: true, Logger: gorm_logrus.New().LogMode(logger.Info),
 	})
 	if err != nil {
 		log.Infof("DB connection error: %s", err)
