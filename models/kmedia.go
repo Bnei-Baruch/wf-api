@@ -5,7 +5,6 @@ func (Kmedia) TableName() string {
 }
 
 type Kmedia struct {
-	ID        int    `json:"id" gorm:"autoIncrement"`
 	KmediaID  string `json:"kmedia_id" gorm:"primaryKey"`
 	Date      string `json:"date"`
 	FileName  string `json:"file_name"`

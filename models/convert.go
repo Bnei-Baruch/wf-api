@@ -7,7 +7,6 @@ func (Convert) TableName() string {
 }
 
 type Convert struct {
-	ID        int            `json:"id" gorm:"autoIncrement"`
 	ConvertID string         `json:"convert_id" gorm:"primaryKey"`
 	Name      string         `json:"name"`
 	Date      string         `json:"date"`

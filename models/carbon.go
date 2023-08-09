@@ -5,7 +5,6 @@ func (Carbon) TableName() string {
 }
 
 type Carbon struct {
-	ID        int     `json:"id" gorm:"autoIncrement"`
 	CarbonID  string  `json:"carbon_id" gorm:"primaryKey"`
 	SendID    string  `json:"send_id"`
 	Date      string  `json:"date"`

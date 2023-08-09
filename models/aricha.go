@@ -7,7 +7,6 @@ func (Aricha) TableName() string {
 }
 
 type Aricha struct {
-	ID       int            `json:"id" gorm:"autoIncrement"`
 	ArichaID string         `json:"aricha_id" gorm:"primaryKey"`
 	Date     string         `json:"date"`
 	FileName string         `json:"file_name"`

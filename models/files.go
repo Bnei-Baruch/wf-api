@@ -3,7 +3,6 @@ package models
 import "gorm.io/datatypes"
 
 type File struct {
-	ID         int            `json:"id" gorm:"autoIncrement"`
 	FileID     string         `json:"file_id" gorm:"primaryKey"`
 	Date       string         `json:"date"`
 	FileName   string         `json:"file_name"`

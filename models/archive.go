@@ -5,7 +5,6 @@ func (Archive) TableName() string {
 }
 
 type Archive struct {
-	ID        int    `json:"id" gorm:"autoIncrement"`
 	ArchiveID string `json:"archive_id" gorm:"primaryKey"`
 	Date      string `json:"date"`
 	FileName  string `json:"file_name"`

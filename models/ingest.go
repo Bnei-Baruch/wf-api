@@ -9,7 +9,6 @@ func (Ingest) TableName() string {
 }
 
 type Ingest struct {
-	ID         int            `json:"id" gorm:"autoIncrement"`
 	CaptureID  string         `json:"capture_id" gorm:"primaryKey"`
 	CaptureSrc string         `json:"capture_src"`
 	Date       string         `json:"date"`

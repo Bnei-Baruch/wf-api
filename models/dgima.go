@@ -10,7 +10,6 @@ func (Dgima) TableName() string {
 }
 
 type Dgima struct {
-	ID        int             `json:"id" gorm:"autoIncrement"`
 	DgimaID   string          `json:"dgima_id" gorm:"primaryKey"`
 	Date      string          `json:"date"`
 	FileName  string          `json:"file_name"`

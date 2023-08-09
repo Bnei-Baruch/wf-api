@@ -3,7 +3,6 @@ package models
 import "gorm.io/datatypes"
 
 type Job struct {
-	ID       int            `json:"id" gorm:"autoIncrement"`
 	JobID    string         `json:"job_id" gorm:"primaryKey"`
 	Date     string         `json:"date"`
 	FileName string         `json:"file_name"`

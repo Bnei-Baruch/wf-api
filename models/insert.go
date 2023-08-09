@@ -7,7 +7,6 @@ func (Insert) TableName() string {
 }
 
 type Insert struct {
-	ID         int            `json:"id" gorm:"autoIncrement"`
 	InsertID   string         `json:"insert_id" gorm:"primaryKey"`
 	InsertName string         `json:"insert_name"`
 	Date       string         `json:"date"`

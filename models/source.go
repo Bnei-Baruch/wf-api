@@ -11,7 +11,6 @@ func (Source) TableName() string {
 }
 
 type Source struct {
-	ID       int            `json:"id" gorm:"autoIncrement"`
 	SourceID string         `json:"source_id" gorm:"primaryKey"`
 	Date     string         `json:"date"`
 	FileName string         `json:"file_name"`

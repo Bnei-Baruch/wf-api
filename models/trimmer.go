@@ -10,7 +10,6 @@ func (Trimmer) TableName() string {
 }
 
 type Trimmer struct {
-	ID        int             `json:"id" gorm:"autoIncrement"`
 	TrimID    string          `json:"trim_id" gorm:"primaryKey"`
 	Date      string          `json:"date"`
 	FileName  string          `json:"file_name"`

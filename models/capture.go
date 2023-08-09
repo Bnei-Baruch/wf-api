@@ -7,7 +7,6 @@ func (Capture) TableName() string {
 }
 
 type Capture struct {
-	ID         int            `json:"id" gorm:"autoIncrement"`
 	CaptureID  string         `json:"capture_id" gorm:"primaryKey"`
 	CaptureSrc string         `json:"capture_src"`
 	Date       string         `json:"date"`

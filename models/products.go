@@ -8,7 +8,6 @@ import (
 )
 
 type Product struct {
-	ID          int            `json:"id" gorm:"autoIncrement"`
 	ProductID   string         `json:"product_id" gorm:"primaryKey"`
 	Date        string         `json:"date"`
 	Language    string         `json:"language"`
