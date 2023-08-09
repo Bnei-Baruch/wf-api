@@ -119,11 +119,12 @@ func GetRecordByID(c *gin.Context) {
 func PutRecord(c *gin.Context) {
 	root := c.Params.ByName("root")
 	t := recd[root]
+	idKey := ids[root]
 	err := c.BindJSON(&t)
 	if err != nil {
 		NewBadRequestError(err).Abort(c)
 	}
-	err = models.CreateRecord(t)
+	err = models.CreateRecord(t, idKey)
 	if err != nil {
 		NewInternalError(err).Abort(c)
 	} else {
@@ -333,7 +334,7 @@ func PutStateByID(c *gin.Context) {
 		NewBadRequestError(err).Abort(c)
 	}
 
-	err = models.CreateRecord(t)
+	err = models.CreateRecord(t, "state_id")
 
 	if err != nil {
 		NewInternalError(err).Abort(c)
