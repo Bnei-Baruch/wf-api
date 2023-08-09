@@ -17,6 +17,9 @@ import (
 
 var DB *gorm.DB
 
+// we got unexpected result in gorm using ID when it's does not primary key
+// https://github.com/go-gorm/gorm/issues/6343
+
 type Tabler interface {
 	TableName() string
 }
