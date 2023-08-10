@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	gorm_logrus "github.com/onrik/gorm-logrus"
 	log "github.com/sirupsen/logrus"
@@ -58,7 +59,11 @@ func CreateRecord(s interface{}, id string) error {
 }
 
 func UpdateRecord(idKey string, idVal string, colKey string, colVal interface{}, table string) error {
-	sqlCmd := "UPDATE " + table + " SET " + colKey + " = $2 WHERE " + idKey + "=$1"
+	if _, ok := colVal.(map[string]interface{}); ok {
+		j, _ := json.Marshal(colVal)
+		colVal = string(j)
+	}
+	sqlCmd := `UPDATE ` + table + ` SET ` + colKey + ` = $2 WHERE ` + idKey + `=$1`
 	r := DB.Exec(sqlCmd, idVal, colVal)
 	if r.Error != nil {
 		return r.Error
@@ -75,7 +80,7 @@ func RemoveRecord(idKey string, idVal string, s interface{}) error {
 }
 
 func FindByID(key string, id string, s interface{}) (interface{}, error) {
-	r := DB.Where(key+" = ?", id).First(&s)
+	r := DB.Debug().Where(key+" = ?", id).First(&s)
 	if r.Error != nil {
 		return s, r.Error
 	}

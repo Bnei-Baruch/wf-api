@@ -145,8 +145,8 @@ func UpdateRecord(c *gin.Context) {
 	// JSONB we take from body and simple value from option
 	val := c.Query("value")
 	var err error
-	var t map[string]interface{}
-	err = c.ShouldBindJSON(&t)
+	var j map[string]interface{}
+	err = c.ShouldBindJSON(&j)
 
 	if val == "" && err != nil {
 		NewBadRequestError(err).Abort(c)
@@ -156,7 +156,7 @@ func UpdateRecord(c *gin.Context) {
 	// Ignore value option if body exist
 	if err == nil {
 		val = ""
-		err = models.UpdateRecord(idKey, idVal, key, t, root)
+		err = models.UpdateRecord(idKey, idVal, key, j, root)
 	}
 
 	if val != "" {
