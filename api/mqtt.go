@@ -55,8 +55,9 @@ func InitMQTT() error {
 	opts.SetUsername(viper.GetString("mqtt.user"))
 	opts.SetPassword(viper.GetString("mqtt.password"))
 	opts.SetAutoReconnect(true)
-	//opts.SetOnConnectHandler(SubMQTT)
+	opts.SetOnConnectHandler(SubMQTT)
 	opts.SetConnectionLostHandler(LostMQTT)
+	opts.SetBinaryWill(viper.GetString("mqtt.status_topic"), []byte("Offline"), byte(2), true)
 	MQTT = mqtt.NewClient(opts)
 	if token := MQTT.Connect(); token.Wait() && token.Error() != nil {
 		return token.Error()
@@ -65,11 +66,17 @@ func InitMQTT() error {
 }
 
 func SubMQTT(c mqtt.Client) {
-	if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), gotMessage); token.Wait() && token.Error() != nil {
-		log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.topic"))
+	if token := MQTT.Publish(viper.GetString("mqtt.status_topic"), byte(2), true, []byte("Online")); token.Wait() && token.Error() != nil {
+		log.Infof("MQTT: notify status to: %s", viper.GetString("mqtt.status_topic"))
 	} else {
-		log.Errorf("MQTT: Subscribe error: %s", token.Error())
+		log.Errorf("MQTT: notify status error: %s", token.Error())
 	}
+
+	//if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), gotMessage); token.Wait() && token.Error() != nil {
+	//	log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.topic"))
+	//} else {
+	//	log.Errorf("MQTT: Subscribe error: %s", token.Error())
+	//}
 }
 
 func LostMQTT(c mqtt.Client, err error) {
