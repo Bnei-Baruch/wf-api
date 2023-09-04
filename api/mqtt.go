@@ -49,7 +49,7 @@ func InitMQTT() error {
 
 	opts := mqtt.NewClientOptions()
 	//opts.SetOrderMatters(false)
-	opts.SetKeepAlive(10 * time.Second)
+	//opts.SetKeepAlive(10 * time.Second)
 	opts.AddBroker(viper.GetString("mqtt.url"))
 	opts.SetClientID(viper.GetString("mqtt.client_id"))
 	opts.SetUsername(viper.GetString("mqtt.user"))
@@ -57,7 +57,7 @@ func InitMQTT() error {
 	opts.SetAutoReconnect(true)
 	opts.SetOnConnectHandler(SubMQTT)
 	opts.SetConnectionLostHandler(LostMQTT)
-	opts.SetBinaryWill(viper.GetString("mqtt.status_topic"), []byte("Offline"), byte(2), true)
+	opts.SetBinaryWill(viper.GetString("mqtt.status_topic"), []byte("Offline"), byte(1), true)
 	MQTT = mqtt.NewClient(opts)
 	if token := MQTT.Connect(); token.Wait() && token.Error() != nil {
 		return token.Error()
