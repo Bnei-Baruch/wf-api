@@ -128,7 +128,7 @@ func SendMessage(id string) {
 		m, _ = models.FindTrimmed([]models.Trimmer{})
 	case "drim":
 		topic = viper.GetString("mqtt.state_dgima_topic")
-		m, _ = models.FindTrimmed([]models.Dgima{})
+		m, _ = models.FindDgima([]models.Dgima{})
 	case "bdika":
 		topic = viper.GetString("mqtt.state_aricha_topic")
 		m, _ = models.FindAricha([]models.Aricha{})

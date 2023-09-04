@@ -171,6 +171,9 @@ func UpdateRecord(c *gin.Context) {
 		if root == "trimmer" {
 			go SendMessage("trim")
 		}
+		if root == "dgima" {
+			go SendMessage("drim")
+		}
 	}
 }
 
@@ -210,6 +213,9 @@ func UpdateJsonbRecord(c *gin.Context) {
 		if root == "trimmer" {
 			go SendMessage("trim")
 		}
+		if root == "dgima" {
+			go SendMessage("drim")
+		}
 	}
 }
 
@@ -226,6 +232,9 @@ func RemoveRecord(c *gin.Context) {
 		go SendMessage(root)
 		if root == "trimmer" {
 			go SendMessage("trim")
+		}
+		if root == "dgima" {
+			go SendMessage("drim")
 		}
 	}
 }
