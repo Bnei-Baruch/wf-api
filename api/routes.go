@@ -12,7 +12,6 @@ func SetupRoutes(router *gin.Engine) {
 	state.POST("/:tag/:id", PutStateByID)
 	state.PUT("/:tag/:id/:prop", PutStateByProp)
 	state.DELETE("/:tag/:id/:prop", RemoveStateByProp)
-	//state.POST("/:tag/:id/:prop", PostStateByProp)
 	router.GET("/states", GetStates)
 
 	router.GET("/source/file_uid/:uid", GetSourceByUID)

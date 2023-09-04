@@ -98,7 +98,7 @@ func V1FindByKV(key string, val string, s interface{}) (interface{}, error) {
 func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, error) {
 	var where []string
 	sqlStatement := "SELECT * FROM " + table
-	limit := "100"
+	limit := "1000"
 	offset := "0"
 	i := 0
 	chk, _ := regexp.MatchString(`^(trimmer|aricha|dgima|ingest|capture)$`, table)
