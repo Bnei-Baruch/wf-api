@@ -66,10 +66,10 @@ func InitMQTT() error {
 }
 
 func SubMQTT(c mqtt.Client) {
-	if token := MQTT.Publish(viper.GetString("mqtt.status_topic"), byte(2), true, []byte("Online")); token.Wait() && token.Error() != nil {
-		log.Infof("MQTT: notify status to: %s", viper.GetString("mqtt.status_topic"))
-	} else {
+	if token := MQTT.Publish(viper.GetString("mqtt.status_topic"), byte(1), true, []byte("Online")); token.Wait() && token.Error() != nil {
 		log.Errorf("MQTT: notify status error: %s", token.Error())
+	} else {
+		log.Infof("MQTT: notify status to: %s", viper.GetString("mqtt.status_topic"))
 	}
 
 	//if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), gotMessage); token.Wait() && token.Error() != nil {
