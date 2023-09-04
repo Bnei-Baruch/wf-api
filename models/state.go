@@ -36,6 +36,15 @@ func GetStateProp(id string, prop string) (interface{}, error) {
 	return data, nil
 }
 
+func RemoveState(id string) error {
+	r := DB.Exec("DELETE FROM state WHERE state_id = ?", id)
+	if r.Error != nil {
+		return r.Error
+	}
+
+	return nil
+}
+
 func RemoveStateProp(id string, prop string) error {
 	r := DB.Exec("UPDATE state SET data = data - ? WHERE state_id = ?", prop, id)
 	if r.Error != nil {

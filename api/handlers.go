@@ -325,6 +325,17 @@ func RemoveStateByProp(c *gin.Context) {
 	}
 }
 
+func RemoveStateByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	err := models.RemoveState(id)
+	if err != nil {
+		NewInternalError(err).Abort(c)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"result": "success"})
+		go SendMessage("langcheck")
+	}
+}
+
 func PutStateByID(c *gin.Context) {
 	t := &models.State{}
 	t.StateID = c.Params.ByName("id")
