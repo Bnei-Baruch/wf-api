@@ -217,6 +217,8 @@ func UpdateJSONB(idKey string, idVal string, prop string, propVal interface{}, t
 		}
 	} else {
 		varType = "jsonb"
+		j, _ := json.Marshal(propVal)
+		propVal = string(j)
 	}
 
 	// TODO: Add other types
