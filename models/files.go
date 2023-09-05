@@ -13,7 +13,7 @@ type File struct {
 	Language   string         `json:"language"`
 	MimeType   string         `json:"mime_type"`
 	UID        string         `json:"uid"`
-	WID        string         `json:"wid"`
+	WID        string         `json:"wid" gorm:"column:wid"`
 	Properties datatypes.JSON `json:"properties" gorm:"type:jsonb"`
 	ProductID  string         `json:"product_id"`
 	MediaInfo  datatypes.JSON `json:"media_info" gorm:"type:jsonb"`
