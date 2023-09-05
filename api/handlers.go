@@ -133,6 +133,9 @@ func PutRecord(c *gin.Context) {
 		if root == "trimmer" {
 			go SendMessage("trim")
 		}
+		if root == "dgima" {
+			go SendMessage("drim")
+		}
 	}
 }
 
