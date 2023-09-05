@@ -129,11 +129,11 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 		// FIXME: It's products endpoint compb
 		if k == "collection_uid" {
 			if i == 0 {
-				sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`line['%s'] = '%s'`, k, v[0])
+				sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`line['%s'] = '"%s"'`, k, v[0])
 				i += 1
 				continue
 			} else {
-				where = append(where, fmt.Sprintf(`line['%s'] = '%s'`, k, v[0]))
+				where = append(where, fmt.Sprintf(`line['%s'] = '"%s"'`, k, v[0]))
 				i += 1
 				continue
 			}
