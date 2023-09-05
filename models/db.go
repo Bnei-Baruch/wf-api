@@ -126,6 +126,19 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 			}
 		}
 
+		// FIXME: It's products endpoint compb
+		if k == "collection_uid" {
+			if i == 0 {
+				sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`line['%s'] = '%s'`, k, v[0])
+				i += 1
+				continue
+			} else {
+				where = append(where, fmt.Sprintf(`line['%s'] = '%s'`, k, v[0]))
+				i += 1
+				continue
+			}
+		}
+
 		// FIXME: we need to move json to first tree level, write now sha option must first in chk root
 		if chk && k == "sha1" && i == 0 {
 			sqlStatement = sqlStatement + ` WHERE ` + fmt.Sprintf(`original['format']['sha1'] = '"%s"'`, v[0])
