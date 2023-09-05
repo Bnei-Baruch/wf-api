@@ -146,7 +146,7 @@ func V2FindByKV(table string, values url.Values, t interface{}) (interface{}, er
 		sqlStatement = sqlStatement + ` AND ` + strings.Join(where, " AND ")
 	}
 
-	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY id LIMIT %s OFFSET %s`, limit, offset)
+	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY id DESC LIMIT %s OFFSET %s`, limit, offset)
 
 	r := DB.Raw(sqlStatement).Scan(&t)
 
@@ -195,7 +195,7 @@ func FindByJSON(table string, prop string, values url.Values, t interface{}) (in
 		sqlStatement = sqlStatement + ` AND ` + strings.Join(where, " AND ")
 	}
 
-	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY id LIMIT %s OFFSET %s`, limit, offset)
+	sqlStatement = sqlStatement + fmt.Sprintf(` ORDER BY id DESC LIMIT %s OFFSET %s`, limit, offset)
 
 	r := DB.Raw(sqlStatement).Scan(&t)
 
