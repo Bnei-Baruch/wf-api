@@ -63,7 +63,7 @@ var ids = map[string]string{
 	"dgima":    "dgima_id",
 	"aricha":   "aricha_id",
 	"jobs":     "job_id",
-	"files":    "file_id",
+	"files":    "sha1",
 	"cloud":    "cloud_id",
 	"users":    "user_id",
 	"label":    "id",
