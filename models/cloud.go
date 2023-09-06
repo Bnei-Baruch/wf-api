@@ -14,7 +14,7 @@ type Cloud struct {
 	Extension  string         `json:"extension"`
 	Language   string         `json:"language"`
 	Source     string         `json:"source"`
-	WID        string         `json:"wid"`
+	WID        string         `json:"wid" gorm:"column:wid"`
 	UID        string         `json:"uid"`
 	Pattern    string         `json:"pattern"`
 	Properties datatypes.JSON `json:"properties" gorm:"type:jsonb"`
