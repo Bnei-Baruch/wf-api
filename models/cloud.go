@@ -7,7 +7,7 @@ func (Cloud) TableName() string {
 }
 
 type Cloud struct {
-	OID        string         `json:"oid" gorm:"primaryKey"`
+	OID        string         `json:"oid" gorm:"primaryKey;column:oid"`
 	Date       string         `json:"date"`
 	Name       string         `json:"name"`
 	Type       string         `json:"type"`
