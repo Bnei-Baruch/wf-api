@@ -3,12 +3,12 @@ package models
 import "gorm.io/datatypes"
 
 type File struct {
-	FileID     string         `json:"file_id"`
+	FileID     string         `json:"file_id" gorm:"primaryKey"`
 	Date       string         `json:"date"`
 	FileName   string         `json:"file_name"`
 	Extension  string         `json:"extension"`
 	Size       int64          `json:"size"`
-	Sha1       string         `json:"sha1" gorm:"primaryKey"`
+	Sha1       string         `json:"sha1"`
 	FileType   string         `json:"file_type"`
 	Language   string         `json:"language"`
 	MimeType   string         `json:"mime_type"`
