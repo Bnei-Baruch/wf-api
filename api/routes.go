@@ -29,6 +29,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/jobs", GetJobs)
 	router.GET("/drim", GetDgima)
 	router.GET("/bdika", GetAricha)
+	router.GET("/product_files/:id", GetProductFiles)
 
 	// TODO
 	//router.GET("/drim/:id", )

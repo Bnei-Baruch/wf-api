@@ -298,6 +298,18 @@ func GetAricha(c *gin.Context) {
 	}
 }
 
+// Files
+
+func GetProductFiles(c *gin.Context) {
+	var t []models.File
+	id := c.Params.ByName("id")
+	if r, err := models.ProductFiles(t, id); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 // State
 
 func GetStates(c *gin.Context) {

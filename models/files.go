@@ -18,3 +18,8 @@ type File struct {
 	ProductID  string         `json:"product_id"`
 	MediaInfo  datatypes.JSON `json:"media_info" gorm:"type:jsonb"`
 }
+
+func ProductFiles(t interface{}, id string) (interface{}, error) {
+	err := DB.Order("id").Where("product_id = ?", id).Where("properties ->> 'removed' = ?", "false").Find(&t).Error
+	return t, err
+}
