@@ -42,7 +42,7 @@ func FindJobsByUserID(values url.Values, t interface{}) (interface{}, error) {
 			continue
 		}
 		if k == "doers" {
-			where = append(where, fmt.Sprintf(`parent['%s'] ? '"%s"'`, k, v[0]))
+			where = append(where, fmt.Sprintf(`parent['%s'] ? '%s'`, k, v[0]))
 			continue
 		}
 		where = append(where, fmt.Sprintf(`"%s" = '%s'`, k, v[0]))
