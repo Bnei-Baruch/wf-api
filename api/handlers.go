@@ -276,6 +276,16 @@ func GetJobs(c *gin.Context) {
 	}
 }
 
+func GetJobsByUserID(c *gin.Context) {
+	var t []models.Job
+	values := c.Request.URL.Query()
+	if r, err := models.FindJobsByUserID(values, t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 // Dgima
 
 func GetDgima(c *gin.Context) {
