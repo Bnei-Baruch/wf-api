@@ -17,7 +17,7 @@ import (
 )
 
 func Init() {
-	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, ForceQuote: false, DisableQuote: true})
 	if viper.GetString("mqtt.debug") == "true" {
 		log.SetLevel(log.DebugLevel)
 	} else {
