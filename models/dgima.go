@@ -26,3 +26,8 @@ func FindDgima(t interface{}) (interface{}, error) {
 	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Where("parent ->> 'source' != ?", "cassette").Find(&t).Error
 	return t, err
 }
+
+func FindCassette(t interface{}) (interface{}, error) {
+	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Where("parent ->> 'source' = ?", "cassette").Find(&t).Error
+	return t, err
+}

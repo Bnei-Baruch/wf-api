@@ -297,6 +297,15 @@ func GetDgima(c *gin.Context) {
 	}
 }
 
+func GetCassette(c *gin.Context) {
+	var t []models.Dgima
+	if r, err := models.FindCassette(t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 // Aricha
 
 func GetAricha(c *gin.Context) {

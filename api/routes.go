@@ -26,6 +26,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.POST("/:root/:id/:key/:prop", UpdateJsonbRecord)
 
 	router.GET("/trim", GetTrimmed)
+	router.GET("/cassette", GetCassette)
 	router.GET("/jobs", GetJobs)
 	router.GET("/jobs/list", GetJobsByUserID)
 	router.GET("/drim", GetDgima)
@@ -34,6 +35,4 @@ func SetupRoutes(router *gin.Engine) {
 
 	// TODO
 	//router.GET("/drim/:id", )
-	//router.GET("/jobs_list", )
-	//router.GET("/cassette", )
 }
