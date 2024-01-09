@@ -129,6 +129,9 @@ func SendMessage(id string) {
 	case "drim":
 		topic = viper.GetString("mqtt.state_dgima_topic")
 		m, _ = models.FindDgima([]models.Dgima{})
+	case "cassette":
+		topic = viper.GetString("mqtt.state_cassette_topic")
+		m, _ = models.FindCassette([]models.Dgima{})
 	case "bdika":
 		topic = viper.GetString("mqtt.state_aricha_topic")
 		m, _ = models.FindAricha([]models.Aricha{})
