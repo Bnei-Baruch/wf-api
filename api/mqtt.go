@@ -87,25 +87,27 @@ func LostMQTT(c mqtt.Client, err error) {
 func handleMessage(c mqtt.Client, m mqtt.Message) {
 	log.Debugf("MQTT: Received message from topic: %s | %s\n", m.Topic(), m.Payload())
 
-	s := strings.Split(m.Topic(), "/")
-	root := s[2]
-	t := recd[root]
-	idKey := ids[root]
+	go func() {
+		s := strings.Split(m.Topic(), "/")
+		root := s[2]
+		t := recd[root]
+		idKey := ids[root]
 
-	err := json.Unmarshal(m.Payload(), &t)
-	if err != nil {
-		log.Errorf("MQTT: Error Unmarshal: %s", err)
-		return
-	}
+		err := json.Unmarshal(m.Payload(), &t)
+		if err != nil {
+			log.Errorf("MQTT: Error Unmarshal: %s", err)
+			return
+		}
 
-	err = models.CreateRecord(t, idKey)
-	if err != nil {
-		log.Errorf("MQTT: Error CreateRecord: %s", err)
-		return
-	} else {
-		log.Infof("MQTT: CreateRecord success")
-		go SendMessage(root)
-	}
+		err = models.CreateRecord(t, idKey)
+		if err != nil {
+			log.Errorf("MQTT: Error CreateRecord: %s", err)
+			return
+		} else {
+			log.Infof("MQTT: CreateRecord success")
+			go SendMessage(root)
+		}
+	}()
 }
 
 func SendRespond(id string, m *MqttPayload) {
