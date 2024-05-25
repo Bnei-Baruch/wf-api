@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -72,19 +73,39 @@ func SubMQTT(c mqtt.Client) {
 		log.Infof("MQTT: notify status to: %s", viper.GetString("mqtt.status_topic"))
 	}
 
-	//if token := MQTT.Subscribe(viper.GetString("mqtt.topic"), byte(1), gotMessage); token.Wait() && token.Error() != nil {
-	//	log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.topic"))
-	//} else {
-	//	log.Errorf("MQTT: Subscribe error: %s", token.Error())
-	//}
+	if token := MQTT.Subscribe(viper.GetString("mqtt.wfdb_put_topic"), byte(1), handleMessage); token.Wait() && token.Error() != nil {
+		log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.wfdb_put_topic"))
+	} else {
+		log.Errorf("MQTT: Subscribe error: %s", token.Error())
+	}
 }
 
 func LostMQTT(c mqtt.Client, err error) {
 	log.Errorf("MQTT: Lost connection: %s", err)
 }
 
-func gotMessage(c mqtt.Client, m mqtt.Message) {
-	log.Debugf("MQTT: Received message from topic: %s\n", m.Topic())
+func handleMessage(c mqtt.Client, m mqtt.Message) {
+	log.Debugf("MQTT: Received message from topic: %s | %s\n", m.Topic(), m.Payload())
+
+	s := strings.Split(m.Topic(), "/")
+	root := s[2]
+	t := recd[root]
+	idKey := ids[root]
+
+	err := json.Unmarshal(m.Payload(), &t)
+	if err != nil {
+		log.Errorf("MQTT: Error Unmarshal: %s", err)
+		return
+	}
+
+	err = models.CreateRecord(t, idKey)
+	if err != nil {
+		log.Errorf("MQTT: Error CreateRecord: %s", err)
+		return
+	} else {
+		log.Infof("MQTT: CreateRecord success")
+		go SendMessage(root)
+	}
 }
 
 func SendRespond(id string, m *MqttPayload) {
