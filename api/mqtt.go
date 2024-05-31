@@ -73,10 +73,11 @@ func SubMQTT(c mqtt.Client) {
 		log.Infof("MQTT: notify status to: %s", viper.GetString("mqtt.status_topic"))
 	}
 
-	if token := MQTT.Subscribe(viper.GetString("mqtt.wfdb_put_topic"), byte(1), handleMessage); token.Wait() && token.Error() != nil {
-		log.Infof("MQTT: Subscribed to: %s", viper.GetString("mqtt.wfdb_put_topic"))
-	} else {
+	rw := viper.GetString("mqtt.put_topic")
+	if token := MQTT.Subscribe(rw, byte(1), handleMessage); token.Wait() && token.Error() != nil {
 		log.Errorf("MQTT: Subscribe error: %s", token.Error())
+	} else {
+		log.Infof("MQTT: Subscribed to: %s", rw)
 	}
 }
 
