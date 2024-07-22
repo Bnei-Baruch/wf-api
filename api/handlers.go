@@ -27,26 +27,26 @@ var list = map[string]interface{}{
 	"label":    []models.Label{},
 }
 
-var recd = map[string]interface{}{
-	"ingest":   &models.Ingest{},
-	"trimmer":  &models.Trimmer{},
-	"products": &models.Product{},
-	"state":    &models.State{},
-	"kmedia":   &models.Kmedia{},
-	"archive":  &models.Archive{},
-	"capture":  &models.Capture{},
-	"convert":  &models.Convert{},
-	"carbon":   &models.Carbon{},
-	"insert":   &models.Insert{},
-	"source":   &models.Source{},
-	"dgima":    &models.Dgima{},
-	"aricha":   &models.Aricha{},
-	"jobs":     &models.Job{},
-	"files":    &models.File{},
-	"cloud":    &models.Cloud{},
-	"users":    &models.User{},
-	"label":    &models.Label{},
-}
+//var recd = map[string]interface{}{
+//	"ingest":   &models.Ingest{},
+//	"trimmer":  &models.Trimmer{},
+//	"products": &models.Product{},
+//	"state":    &models.State{},
+//	"kmedia":   &models.Kmedia{},
+//	"archive":  &models.Archive{},
+//	"capture":  &models.Capture{},
+//	"convert":  &models.Convert{},
+//	"carbon":   &models.Carbon{},
+//	"insert":   &models.Insert{},
+//	"source":   &models.Source{},
+//	"dgima":    &models.Dgima{},
+//	"aricha":   &models.Aricha{},
+//	"jobs":     &models.Job{},
+//	"files":    &models.File{},
+//	"cloud":    &models.Cloud{},
+//	"users":    &models.User{},
+//	"label":    &models.Label{},
+//}
 
 var ids = map[string]string{
 	"ingest":   "capture_id",
@@ -67,6 +67,30 @@ var ids = map[string]string{
 	"cloud":    "oid",
 	"users":    "user_id",
 	"label":    "id",
+}
+
+func GetModel(root string) interface{} {
+	recd := map[string]interface{}{
+		"ingest":   &models.Ingest{},
+		"trimmer":  &models.Trimmer{},
+		"products": &models.Product{},
+		"state":    &models.State{},
+		"kmedia":   &models.Kmedia{},
+		"archive":  &models.Archive{},
+		"capture":  &models.Capture{},
+		"convert":  &models.Convert{},
+		"carbon":   &models.Carbon{},
+		"insert":   &models.Insert{},
+		"source":   &models.Source{},
+		"dgima":    &models.Dgima{},
+		"aricha":   &models.Aricha{},
+		"jobs":     &models.Job{},
+		"files":    &models.File{},
+		"cloud":    &models.Cloud{},
+		"users":    &models.User{},
+		"label":    &models.Label{},
+	}
+	return recd[root]
 }
 
 func V1GetRecordsByKV(c *gin.Context) {
@@ -108,7 +132,7 @@ func GetRecordByID(c *gin.Context) {
 	root := c.Params.ByName("root")
 	idVal := c.Params.ByName("id")
 	idKey := ids[root]
-	t := recd[root]
+	t := GetModel(root)
 	if r, err := models.FindByID(idKey, idVal, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -118,9 +142,9 @@ func GetRecordByID(c *gin.Context) {
 
 func PutRecord(c *gin.Context) {
 	root := c.Params.ByName("root")
-	t := recd[root]
+	t := GetModel(root)
 	idKey := ids[root]
-	err := c.BindJSON(&t)
+	err := c.BindJSON(t)
 	if err != nil {
 		NewBadRequestError(err).Abort(c)
 	}
@@ -129,17 +153,17 @@ func PutRecord(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
-		go SendMessage(root)
-		if root == "trimmer" {
-			go SendMessage("trim")
-		}
-		if root == "dgima" {
-			go SendMessage("drim")
-			go SendMessage("cassette")
-		}
-		if root == "aricha" {
-			go SendMessage("bdika")
-		}
+		//go SendMessage(root)
+		//if root == "trimmer" {
+		//	go SendMessage("trim")
+		//}
+		//if root == "dgima" {
+		//	go SendMessage("drim")
+		//	go SendMessage("cassette")
+		//}
+		//if root == "aricha" {
+		//	go SendMessage("bdika")
+		//}
 	}
 }
 
@@ -238,7 +262,7 @@ func RemoveRecord(c *gin.Context) {
 	root := c.Params.ByName("root")
 	idKey := ids[root]
 	idVal := c.Params.ByName("id")
-	t := recd[root]
+	t := GetModel(root)
 	err := models.RemoveRecord(idKey, idVal, t)
 	if err != nil {
 		NewInternalError(err).Abort(c)

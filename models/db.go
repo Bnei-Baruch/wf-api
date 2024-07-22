@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 	"net/url"
 	"regexp"
@@ -51,10 +50,11 @@ func InitDB() {
 }
 
 func CreateRecord(s interface{}, id string) error {
-	r := DB.Clauses(clause.OnConflict{Columns: []clause.Column{{Name: id}}, UpdateAll: true}).Create(s)
-	if r.Error != nil {
-		return r.Error
-	}
+	//r := DB.Clauses(clause.OnConflict{Columns: []clause.Column{{Name: id}}, UpdateAll: true}).Create(s)
+	//if r.Error != nil {
+	//	return r.Error
+	//}
+	log.Infof("CreateRecord: %s", s)
 	return nil
 }
 

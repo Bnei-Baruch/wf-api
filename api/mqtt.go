@@ -91,7 +91,7 @@ func handleMessage(c mqtt.Client, m mqtt.Message) {
 	go func() {
 		s := strings.Split(m.Topic(), "/")
 		root := s[2]
-		t := recd[root]
+		t := GetModel(root)
 		idKey := ids[root]
 
 		err := json.Unmarshal(m.Payload(), &t)
