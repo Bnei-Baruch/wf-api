@@ -153,17 +153,17 @@ func PutRecord(c *gin.Context) {
 		NewInternalError(err).Abort(c)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"result": "success"})
-		//go SendMessage(root)
-		//if root == "trimmer" {
-		//	go SendMessage("trim")
-		//}
-		//if root == "dgima" {
-		//	go SendMessage("drim")
-		//	go SendMessage("cassette")
-		//}
-		//if root == "aricha" {
-		//	go SendMessage("bdika")
-		//}
+		go SendMessage(root)
+		if root == "trimmer" {
+			go SendMessage("trim")
+		}
+		if root == "dgima" {
+			go SendMessage("drim")
+			go SendMessage("cassette")
+		}
+		if root == "aricha" {
+			go SendMessage("bdika")
+		}
 	}
 }
 

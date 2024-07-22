@@ -53,9 +53,9 @@ func Init() {
 	}
 
 	// Setup mqtt
-	//if err := api.InitMQTT(); err != nil {
-	//	log.Errorf("MQTT Init error: %s", err)
-	//}
+	if err := api.InitMQTT(); err != nil {
+		log.Errorf("MQTT Init error: %s", err)
+	}
 
 	// Setup http
 	gin.SetMode(viper.GetString("server.mode"))
