@@ -6,48 +6,6 @@ import (
 	"net/http"
 )
 
-var list = map[string]interface{}{
-	"ingest":   []models.Ingest{},
-	"trimmer":  []models.Trimmer{},
-	"products": []models.Product{},
-	"state":    []models.State{},
-	"kmedia":   []models.Kmedia{},
-	"archive":  []models.Archive{},
-	"capture":  []models.Capture{},
-	"convert":  []models.Convert{},
-	"carbon":   []models.Carbon{},
-	"insert":   []models.Insert{},
-	"source":   []models.Source{},
-	"dgima":    []models.Dgima{},
-	"aricha":   []models.Aricha{},
-	"jobs":     []models.Job{},
-	"files":    []models.File{},
-	"cloud":    []models.Cloud{},
-	"users":    []models.User{},
-	"label":    []models.Label{},
-}
-
-//var recd = map[string]interface{}{
-//	"ingest":   &models.Ingest{},
-//	"trimmer":  &models.Trimmer{},
-//	"products": &models.Product{},
-//	"state":    &models.State{},
-//	"kmedia":   &models.Kmedia{},
-//	"archive":  &models.Archive{},
-//	"capture":  &models.Capture{},
-//	"convert":  &models.Convert{},
-//	"carbon":   &models.Carbon{},
-//	"insert":   &models.Insert{},
-//	"source":   &models.Source{},
-//	"dgima":    &models.Dgima{},
-//	"aricha":   &models.Aricha{},
-//	"jobs":     &models.Job{},
-//	"files":    &models.File{},
-//	"cloud":    &models.Cloud{},
-//	"users":    &models.User{},
-//	"label":    &models.Label{},
-//}
-
 var ids = map[string]string{
 	"ingest":   "capture_id",
 	"trimmer":  "trim_id",
@@ -67,6 +25,30 @@ var ids = map[string]string{
 	"cloud":    "oid",
 	"users":    "user_id",
 	"label":    "id",
+}
+
+func GetModelArray(root string) interface{} {
+	list := map[string]interface{}{
+		"ingest":   []models.Ingest{},
+		"trimmer":  []models.Trimmer{},
+		"products": []models.Product{},
+		"state":    []models.State{},
+		"kmedia":   []models.Kmedia{},
+		"archive":  []models.Archive{},
+		"capture":  []models.Capture{},
+		"convert":  []models.Convert{},
+		"carbon":   []models.Carbon{},
+		"insert":   []models.Insert{},
+		"source":   []models.Source{},
+		"dgima":    []models.Dgima{},
+		"aricha":   []models.Aricha{},
+		"jobs":     []models.Job{},
+		"files":    []models.File{},
+		"cloud":    []models.Cloud{},
+		"users":    []models.User{},
+		"label":    []models.Label{},
+	}
+	return list[root]
 }
 
 func GetModel(root string) interface{} {
@@ -97,7 +79,7 @@ func V1GetRecordsByKV(c *gin.Context) {
 	root := c.Params.ByName("root")
 	key := c.Query("key")
 	val := c.Query("value")
-	t := list[root]
+	t := GetModelArray(root)
 	if r, err := models.V1FindByKV(key, val, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -108,7 +90,7 @@ func V1GetRecordsByKV(c *gin.Context) {
 func V2GetRecordsByKV(c *gin.Context) {
 	root := c.Params.ByName("root")
 	values := c.Request.URL.Query()
-	t := list[root]
+	t := GetModelArray(root)
 	if r, err := models.V2FindByKV(root, values, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -120,7 +102,7 @@ func GetRecordsByJSON(c *gin.Context) {
 	root := c.Params.ByName("root")
 	prop := c.Params.ByName("prop")
 	values := c.Request.URL.Query()
-	t := list[root]
+	t := GetModelArray(root)
 	if r, err := models.FindByJSON(root, prop, values, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
