@@ -25,6 +25,7 @@ var ids = map[string]string{
 	"cloud":    "oid",
 	"users":    "user_id",
 	"label":    "id",
+	"backup":   "id",
 }
 
 func GetModelArray(root string) interface{} {
@@ -47,6 +48,7 @@ func GetModelArray(root string) interface{} {
 		"cloud":    []models.Cloud{},
 		"users":    []models.User{},
 		"label":    []models.Label{},
+		"backup":   []models.Backup{},
 	}
 	return list[root]
 }
@@ -71,6 +73,7 @@ func GetModel(root string) interface{} {
 		"cloud":    &models.Cloud{},
 		"users":    &models.User{},
 		"label":    &models.Label{},
+		"backup":   &models.Backup{},
 	}
 	return recd[root]
 }
