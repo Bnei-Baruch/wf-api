@@ -165,6 +165,9 @@ func SendMessage(id string) {
 	case "langcheck":
 		topic = viper.GetString("mqtt.state_langcheck_topic")
 		m, _ = models.GetState("langcheck")
+	case "media":
+		topic = viper.GetString("mqtt.state_media_topic")
+		m, _ = models.FindMedia([]models.Media{})
 	default:
 		return
 	}
