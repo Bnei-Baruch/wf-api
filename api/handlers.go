@@ -25,6 +25,7 @@ var ids = map[string]string{
 	"cloud":    "oid",
 	"users":    "user_id",
 	"label":    "id",
+	"labels":   "id",
 	"backup":   "id",
 	"media":    "media_id",
 }
@@ -49,6 +50,7 @@ func GetModelArray(root string) interface{} {
 		"cloud":    []models.Cloud{},
 		"users":    []models.User{},
 		"label":    []models.Label{},
+		"labels":   []models.Label{},
 		"backup":   []models.Backup{},
 		"media":    []models.Media{},
 	}
@@ -75,10 +77,20 @@ func GetModel(root string) interface{} {
 		"cloud":    &models.Cloud{},
 		"users":    &models.User{},
 		"label":    &models.Label{},
+		"labels":   &models.Label{},
 		"backup":   &models.Backup{},
 		"media":    &models.Media{},
 	}
 	return recd[root]
+}
+
+// Table name may differ from the URL root (e.g. root "label" -> table "labels"),
+// so raw SQL queries take it from the model when it implements Tabler.
+func GetTableName(root string) string {
+	if m, ok := GetModel(root).(models.Tabler); ok {
+		return m.TableName()
+	}
+	return root
 }
 
 func V1GetRecordsByKV(c *gin.Context) {
@@ -97,7 +109,7 @@ func V2GetRecordsByKV(c *gin.Context) {
 	root := c.Params.ByName("root")
 	values := c.Request.URL.Query()
 	t := GetModelArray(root)
-	if r, err := models.V2FindByKV(root, values, t); err != nil {
+	if r, err := models.V2FindByKV(GetTableName(root), values, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -109,7 +121,7 @@ func GetRecordsByJSON(c *gin.Context) {
 	prop := c.Params.ByName("prop")
 	values := c.Request.URL.Query()
 	t := GetModelArray(root)
-	if r, err := models.FindByJSON(root, prop, values, t); err != nil {
+	if r, err := models.FindByJSON(GetTableName(root), prop, values, t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, r)

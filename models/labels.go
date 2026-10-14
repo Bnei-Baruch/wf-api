@@ -1,5 +1,9 @@
 package models
 
+func (Label) TableName() string {
+	return "labels"
+}
+
 type Label struct {
 	ID           int    `json:"id" gorm:"primaryKey"`
 	Date         string `json:"date"`
