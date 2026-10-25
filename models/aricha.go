@@ -21,3 +21,8 @@ func FindAricha(t interface{}) (interface{}, error) {
 	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error
 	return t, err
 }
+
+func FindAricheForMedia(t interface{}) (interface{}, error) {
+	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Where("wfstatus ->> 'media' = ?", "true").Find(&t).Error
+	return t, err
+}

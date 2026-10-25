@@ -167,7 +167,7 @@ func SendMessage(id string) {
 		m, _ = models.GetState("langcheck")
 	case "media":
 		topic = viper.GetString("mqtt.state_media_topic")
-		m, _ = models.FindMedia([]models.Media{})
+		m, _ = models.FindAricheForMedia([]models.Aricha{})
 	default:
 		return
 	}

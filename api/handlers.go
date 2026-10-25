@@ -345,6 +345,15 @@ func GetAricha(c *gin.Context) {
 	}
 }
 
+func GetArichaForMedia(c *gin.Context) {
+	var t []models.Dgima
+	if r, err := models.FindAricheForMedia(t); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 // Files
 
 func GetProductFiles(c *gin.Context) {
