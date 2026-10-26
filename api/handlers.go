@@ -277,7 +277,8 @@ func RemoveRecord(c *gin.Context) {
 			go SendMessage("cassette")
 		}
 		if root == "aricha" {
-			go SendMessage("bdika")
+			go SendMessage("aricha")
+			go SendMessage("media")
 		}
 	}
 }

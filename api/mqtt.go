@@ -156,7 +156,7 @@ func SendMessage(id string) {
 	case "cassette":
 		topic = viper.GetString("mqtt.state_cassette_topic")
 		m, _ = models.FindCassette([]models.Dgima{})
-	case "bdika":
+	case "aricha":
 		topic = viper.GetString("mqtt.state_aricha_topic")
 		m, _ = models.FindAricha([]models.Aricha{})
 	case "jobs":
