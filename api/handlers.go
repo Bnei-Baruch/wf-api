@@ -162,7 +162,8 @@ func PutRecord(c *gin.Context) {
 			go SendMessage("cassette")
 		}
 		if root == "aricha" {
-			go SendMessage("bdika")
+			go SendMessage("aricha")
+			go SendMessage("media")
 		}
 	}
 }
@@ -207,7 +208,8 @@ func UpdateRecord(c *gin.Context) {
 			go SendMessage("cassette")
 		}
 		if root == "aricha" {
-			go SendMessage("bdika")
+			go SendMessage("aricha")
+			go SendMessage("media")
 		}
 	}
 }
@@ -253,7 +255,8 @@ func UpdateJsonbRecord(c *gin.Context) {
 			go SendMessage("cassette")
 		}
 		if root == "aricha" {
-			go SendMessage("bdika")
+			go SendMessage("aricha")
+			go SendMessage("media")
 		}
 	}
 }

@@ -18,7 +18,7 @@ type Aricha struct {
 }
 
 func FindAricha(t interface{}) (interface{}, error) {
-	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Find(&t).Error
+	err := DB.Order("id").Where("wfstatus ->> 'removed' = ?", "false").Where("wfstatus ->> 'media' IS DISTINCT FROM ?", "true").Find(&t).Error
 	return t, err
 }
 
