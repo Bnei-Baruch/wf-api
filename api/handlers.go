@@ -346,7 +346,7 @@ func GetAricha(c *gin.Context) {
 }
 
 func GetArichaForMedia(c *gin.Context) {
-	var t []models.Dgima
+	var t []models.Aricha
 	if r, err := models.FindAricheForMedia(t); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
